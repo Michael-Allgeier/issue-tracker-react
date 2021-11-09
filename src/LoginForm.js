@@ -2,10 +2,16 @@ import { useState } from 'react';
 import _ from 'lodash';
 import { nanoid } from 'nanoid';
 
-function LoginForm() {
+function LoginForm({ setScreen }) {
+
+  function onClickRegister(evt) {
+    console.log('Register Event')
+    evt.preventDefault();
+    setScreen("Register");
+  }
 
   return (
-    <div className="LoginForm">
+    <div id="LoginForm" className="LoginForm">
       <h1 className="LoginForm-header m-3 text-center">Login</h1>
       <form className="LoginForm-Form m-3">
         <label htmlFor="LoginForm-Email" className="mt-3">Email</label>
@@ -16,7 +22,7 @@ function LoginForm() {
           <button type="button" className="LoginForm-Submit btn btn-outline-primary btn-lg">Login</button>
           <div>
             <div>Don't Have an Account?</div>
-            <div>Click Here to Register</div>
+            <div><a href="#RegisterForm" onClick={(evt) => onClickRegister(evt)}>Click Here to Register</a></div>
           </div>
         </div>
       </form>

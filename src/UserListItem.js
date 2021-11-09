@@ -1,15 +1,17 @@
 
-function UserListItem() {
+function UserListItem({ user, onEditClick }) {
   return (
-    <div className="UserListItem card">
+    <div id={`user-${user.id}`} className="UserListItem card my-2">
       <div className="d-flex align-items-center">
-        <div className="card-title fs-3 flex-grow-1 user-name px-2">Michael Allgeier</div>
-        <div className="card-text user-email mx-2">michael_allgeier@insideranken.org</div>
-        <div className="card-text user-role mx-2">DEV</div>
-        <button id="edit-user-btn" type="button" className="btn btn-sm btn-outline-dark me-2" title="Edit User">
-          <i className="fas fa-edit fa-lg">Edit</i>
+        <div id={`user-${user.id}-name`} className="card-title fs-3 flex-grow-1 user-name px-2">
+          <a href="#EditUser" onClick={(evt) => onEditClick(evt)}>{user.name}</a>
+        </div>
+        <div id={`user-${user.id}-email`} className="card-text user-email mx-2">{user.email}</div>
+        <div id={`user-${user.id}-role`} className="card-text user-role mx-2">{user.role}</div>
+        {/* <button id="edit-user-btn" type="button" className="btn btn-sm btn-outline-dark me-2" title="Edit User">
+          <i className="fas fa-edit fa-lg"></i>
           <span className="visually-hidden">Edit User</span>
-        </button>
+        </button> */}
       </div>
     </div>
   );
