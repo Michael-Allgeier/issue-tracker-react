@@ -7,8 +7,8 @@ function BugListItem({ bug, onEditClick }) {
         <div id={`bug-${bug.id}-title`} className="card-title fs-3 flex-grow-1 bug-title px-2">
           <a href="#EditBug" onClick={(evt) => onEditClick(evt)}>{bug.title}</a>
         </div>
-        <div id={`bug-${bug.id}-author`} className="card-text bug-author mx-2">{bug.author}</div>
-        <div id={`bug-${bug.id}-date-created`} className="card-text bug-date-created mx-2">{bug.dateCreated}</div>
+        <div id={`bug-${bug.id}-author`} className="card-text bug-author mx-2 text-secondary">{bug.author}</div>
+        <div id={`bug-${bug.id}-date-created`} className="card-text bug-date-created mx-2 text-secondary">{bug.dateCreated}</div>
         {/* <button 
           id="edit-bug-btn" 
           type="button" 

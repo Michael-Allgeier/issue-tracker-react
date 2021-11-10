@@ -29,7 +29,7 @@ function RegisterForm({ setScreen }) {
           <label htmlFor="RegisterForm-ConfirmPassword" className="mt-3">Confirm Password</label>
           <input id="RegisterForm-ConfirmPassword" className="form-control"/>
           <div className="d-flex justify-content-between mt-3">
-            <button type="button" className="RegisterForm-Submit btn btn-outline-primary btn-lg">Register</button>
+            <button type="button" className="RegisterForm-Submit btn btn-success">Register</button>
             <div>
               <div>Already Have an Account?</div>
               <div><a href="#LoginForm" onClick={(evt) => onClickLogin(evt)}>Click Here to Sign In</a></div>

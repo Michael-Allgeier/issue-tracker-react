@@ -19,7 +19,7 @@ function LoginForm({ setScreen }) {
         <label htmlFor="LoginForm-Password" className="mt-3">Password</label>
         <input id="LoginForm-Password" className="form-control"/>
         <div className="d-flex justify-content-between mt-3">
-          <button type="button" className="LoginForm-Submit btn btn-outline-primary btn-lg">Login</button>
+          <button type="button" className="LoginForm-Submit btn btn-success btn-lg">Login</button>
           <div>
             <div>Don't Have an Account?</div>
             <div><a href="#RegisterForm" onClick={(evt) => onClickRegister(evt)}>Click Here to Register</a></div>

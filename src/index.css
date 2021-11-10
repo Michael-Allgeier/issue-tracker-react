@@ -1,0 +1,8 @@
+/* .form-control:disabled, .form-control[readonly] {
+  background-color: rgb(172, 172, 172);
+  border-color: rgb(172, 172, 172);
+} */
+.form-control:disabled, .form-control[readonly] {
+  background-color: #fff;
+  opacity: .5;
+}
