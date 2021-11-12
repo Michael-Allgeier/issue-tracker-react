@@ -1,7 +1,34 @@
-/* .form-control:disabled, .form-control[readonly] {
-  background-color: rgb(172, 172, 172);
-  border-color: rgb(172, 172, 172);
-} */
+
+body {
+  background-image: url(./img/backgroundimg.jpeg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: black;
+  /* background: linear-gradient(rgb(32, 32, 32), rgb(104, 104, 104)); */
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  border: 2px solid rgb(116, 116, 116);
+  width: 100vw;
+  z-index: 1;
+}
+
+main {
+  flex-grow: 1;
+}
+
+footer {
+  border: 2px solid rgb(116, 116, 116)
+}
+
 .form-control:disabled, .form-control[readonly] {
   background-color: #fff;
   opacity: .5;

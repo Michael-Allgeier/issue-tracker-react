@@ -31,8 +31,8 @@ function App() {
     setScreen("UserList");
   }
 
-  return <div className="App container">
-    <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+  return <div className="App">
+    <nav className="navbar navbar-expand-md navbar-dark position-sticky top-0 start-0 end-0 bg-dark">
       <div className="container-fluid">
         <a className="navbar-brand" href="#Home" onClick={(evt) => onClickLogin(evt)}>Issue Tracker</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,13 +56,18 @@ function App() {
         </div>
       </div>
     </nav>
-    {screen === 'Login' && <LoginForm setScreen = {setScreen}/>}
-    {screen === 'Register' && <RegisterForm setScreen = {setScreen}/>}
-    {screen === 'BugList' && <BugList setScreen = {setScreen}/>}
-    {screen === 'EditBug' && <BugEditor />}
-    {screen === 'UserList' && <UserList setScreen = {setScreen}/>}
-    {screen === 'EditUser' && <UserEditor />}
-    </div>;
+    <main>
+      <div className="container">
+        {screen === 'Login' && <LoginForm setScreen = {setScreen}/>}
+        {screen === 'Register' && <RegisterForm setScreen = {setScreen}/>}
+        {screen === 'BugList' && <BugList setScreen = {setScreen}/>}
+        {screen === 'EditBug' && <BugEditor />}
+        {screen === 'UserList' && <UserList setScreen = {setScreen}/>}
+        {screen === 'EditUser' && <UserEditor />}
+      </div>
+    </main>
+    <footer className="p-3 text-center bg-dark">&copy; Michael Allgeier 2021</footer>
+  </div>
 }
 
 export default App;
