@@ -2,7 +2,7 @@ function UserEditor() {
   return (
     <div className="UserEditor">
       <h1 className="UserEditor-Header m-3 text-center">User Name</h1>
-      <form className="UserEditor-EditUser-Form m-3">
+      <form className="UserEditor-EditUser-Form m-3 p-3">
         <h2 className="UserEditor-EditUser-Header">Edit User</h2>
         <label htmlFor="UserEditor-EditUser-GivenName" className="mt-3">Given Name (First Name)</label>
         <input id="UserEditor-EditUser-GivenName" className="form-control" />

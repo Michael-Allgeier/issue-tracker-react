@@ -32,7 +32,7 @@ function App() {
   }
 
   return <div className="App">
-    <nav className="navbar navbar-expand-md navbar-dark position-sticky top-0 start-0 end-0 bg-dark">
+    <nav className="navbar navbar-expand-md navbar-dark position-sticky top-0 start-0 end-0 bg-dark bg-gradient">
       <div className="container-fluid">
         <a className="navbar-brand" href="#Home" onClick={(evt) => onClickLogin(evt)}>Issue Tracker</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

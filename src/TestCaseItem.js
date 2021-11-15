@@ -2,7 +2,7 @@ function TestCaseItem({ testCase }) {
   return (
     <div id={`testCase-${testCase.id}`} className="TestCaseItem card my-2">
       <div>
-        <div id={`testCase-${testCase.id}-testCaseText`} className="card-text fs-5 testCase-text px-2"><a href="#testCase">{testCase.testCase}</a></div>
+        <div id={`testCase-${testCase.id}-testCaseText`} className="card-text fs-5 testCase-text px-2"><a href="#testCase">{testCase.testCaseTitle}</a></div>
         <div className="mx-2 text-muted">
           Created By {testCase.author} on {testCase.dateCreated}
         </div>

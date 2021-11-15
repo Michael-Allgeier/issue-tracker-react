@@ -1,6 +1,3 @@
-import { useState} from 'react';
-import _ from 'lodash';
-import {nanoid} from 'nanoid';
 
 function RegisterForm({ setScreen }) {
 
@@ -13,7 +10,7 @@ function RegisterForm({ setScreen }) {
     return (
       <div id="RegisterForm" className="RegisterForm">
         <h1 className="RegisterForm-Header m-3 text-center">Register</h1>
-        <form className="RegisterForm-Form m-3">
+        <form className="RegisterForm-Form m-3 p-3">
           <label htmlFor="RegisterForm-GivenName" className="mt-3">Given Name (First Name)</label>
           <input id="RegisterForm-GivenName" className="form-control"/>
           <label htmlFor="RegisterForm-FamilyName" className="mt-3">Family Name (Last Name)</label>
@@ -32,7 +29,7 @@ function RegisterForm({ setScreen }) {
             <button type="button" className="RegisterForm-Submit btn btn-success">Register</button>
             <div>
               <div>Already Have an Account?</div>
-              <div><a href="#LoginForm" onClick={(evt) => onClickLogin(evt)}>Click Here to Sign In</a></div>
+              <div><a id="RegisterForm-SignIn" href="#LoginForm" onClick={(evt) => onClickLogin(evt)}>Click Here to Sign In</a></div>
             </div>
           </div>
         </form>

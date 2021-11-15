@@ -33,3 +33,22 @@ footer {
   background-color: #fff;
   opacity: .5;
 }
+
+.LoginForm-Form, .RegisterForm-Form, .UserEditor-EditUser-Form, .BugEditor-EditBug-Form{
+  border: 2px solid white;
+  background-color: rgba(116, 116, 116, 0.5);
+  border-radius: 20px;
+  box-shadow: 5px 5px 5px rgb(116, 116, 116);
+}
+
+.LoginForm-Header, .RegisterForm-Header, .BugList-Header, .UserList-Header, .UserEditor-Header, .BugEditor-Header {
+  text-shadow: 2px 2px rgb(116, 116, 116);
+}
+
+#LoginForm-Register, #RegisterForm-SignIn {
+  color: black;
+}
+
+.BugList-Title, .UserList-Title {
+  color: black;
+}

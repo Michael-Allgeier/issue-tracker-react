@@ -4,7 +4,7 @@ function UserListItem({ user, onEditClick }) {
     <div id={`user-${user.id}`} className="UserListItem card my-2">
       <div className="d-flex align-items-center">
         <div id={`user-${user.id}-name`} className="card-title fs-3 flex-grow-1 user-name px-2">
-          <a href="#EditUser" onClick={(evt) => onEditClick(evt)}>{user.name}</a>
+          <a href="#EditUser" className="UserList-Title" onClick={(evt) => onEditClick(evt)}>{user.name}</a>
         </div>
         <div id={`user-${user.id}-email`} className="card-text user-email mx-2 text-secondary">{user.email}</div>
         <div id={`user-${user.id}-role`} className="card-text user-role mx-2 text-secondary">{user.role}</div>
