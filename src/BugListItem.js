@@ -1,23 +1,40 @@
+import { Link } from 'react-router-dom';
 
-function BugListItem({ bug, onEditClick }) {
-
+function BugListItem({ item }) {
   return (
-    <div id={`bug-${bug.id}`} className="BugListItem card my-2">
-      <div className="d-flex align-items-center">
-        <div id={`bug-${bug.id}-title`} className="card-title fs-3 flex-grow-1 bug-title px-2">
-          <a href="#EditBug" className="BugList-Title" onClick={(evt) => onEditClick(evt)}>{bug.title}</a>
+    <div className="card text-dark mt-3">
+      <div className="card-body align-items-center">
+        <div className="card-title fs-4">
+          <Link to={`/bug/${item._id}`}>{item.title}</Link>
         </div>
-        <div id={`bug-${bug.id}-author`} className="card-text bug-author mx-2 text-secondary">{bug.author}</div>
-        <div id={`bug-${bug.id}-date-created`} className="card-text bug-date-created mx-2 text-secondary">{bug.dateCreated}</div>
-        {/* <button 
-          id="edit-bug-btn" 
-          type="button" 
-          className="btn btn-sm btn-outline-dark me-2" 
-          title="Edit Bug"
-          onClick={(evt) => onEditClick(evt)}>
-          <i className="fas fa-edit fa-lg"></i>
-          <span className="visually-hidden">Edit Bug</span>
-        </button> */}
+        <div className="card-text">
+          <span className="me-2 badge bg-success">{item.assignedTo.fullName}</span>
+          {item.classification === 'Approved' && (
+            <span className="me-2 badge bg-success">{item.classification}</span>
+          )}
+          {item.classification === 'Unapproved' && (
+            <span className="me-2 badge bg-danger">{item.classification}</span>
+          )}
+          {item.classification === 'Duplicate' && (
+            <span className="me-2 badge bg-danger">{item.classification}</span>
+          )}
+          {item.classification === 'Unclassified' && (
+            <span className="me-2 badge bg-warning">{item.classification}</span>
+          )}
+          {item.closed === true && (
+            <span className="me-2 badge bg-danger">Closed</span>
+          )}
+          {item.closed === false && (
+            <span className="me-2 badge bg-success">Open</span>
+          )}
+          {!item.closed && (
+            <span className="me-2 badge bg-danger">Open</span>
+          )}
+        </div>
+        <div className="card-footer">
+          <span className="me-2 badge bg-success">{item.dateCreated}</span>
+          <span className="me-2 badge bg-success">{item.createdBy.fullName}</span>
+        </div>
       </div>
     </div>
   );

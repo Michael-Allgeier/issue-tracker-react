@@ -1,33 +1,55 @@
 import _ from "lodash";
-import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from 'axios';
 import BugListItem from "./BugListItem";
 
-function BugList({ setScreen }) {
+function BugList({ auth, showError, showSuccess }) {
+  const [items, setItems] = useState(null);
+  const [error, setError] = useState('');
+  const [pending, setPending] = useState(true);
 
-  const [bugs, setBugs] = useState([
-    { id: nanoid(), title: "Bug 1", author: "Michael Allgeier", dateCreated: "NOV 5, 2021"},
-    { id: nanoid(), title: "Bug 2", author: "Mike Jones", dateCreated: "NOV 8, 2021"},
-    { id: nanoid(), title: "Bug 3", author: "Adam Smith", dateCreated: "NOV 9, 2021"},
-  ]);
-
-  function onEditClick(evt) {
-    evt.preventDefault();
-    setScreen('EditBug');
-  }
+  useEffect(() => {
+    setPending(true);
+    setError('');
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/list`, {
+      method: 'get',
+      headers: {
+        authorization: `Bearer ${auth?.token}`
+      }
+    })
+    .then(res => {
+      setPending(false);
+      if (_.isArray(res.data)) {
+        setItems(res.data);
+        showSuccess('Bugs Loaded!');
+      } else {
+        setError('Expected an array');
+        showError('Expected an array');
+      }
+    })
+    .catch(err => {
+      setPending(false);
+      setError(err.message);
+      showError(err.message);
+    });
+  }, [auth, showError, showSuccess])
 
   return (
-    <div className="BugList">
-      <h1 className="BugList-Header m-3 text-center">Bug List</h1>
-      <div className="m-3">
-        {_.map(bugs, bug => (
-          <BugListItem
-            key = {bug.id}
-            bug = {bug}
-            onEditClick={(evt) => onEditClick(evt)}
-          />
-        ))}
-      </div>
+    <div>
+      <h1>Bug List</h1>
+      {pending && (
+        <div className="spinner-border text-light" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      )}
+      {error && <div className="text-danger">{error}</div>}
+      {!pending && !error && _.isEmpty(items) && (<div>No Pets Found</div>)}
+      {_.map(items, item => (
+        <BugListItem 
+          key={item._id}
+          item={item}
+        />
+      ))}
     </div>
   );
 }

@@ -9,21 +9,21 @@ body {
   /* background: linear-gradient(rgb(32, 32, 32), rgb(104, 104, 104)); */
 }
 
-.App {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
 .navbar {
   border: 2px solid rgb(116, 116, 116);
   width: 100vw;
   z-index: 1;
 }
 
+/* .App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 main {
   flex-grow: 1;
-}
+} */
 
 footer {
   border: 2px solid rgb(116, 116, 116)
