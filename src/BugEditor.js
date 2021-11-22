@@ -1,74 +1,324 @@
 import _ from "lodash";
-import { nanoid } from "nanoid";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import CommentItem from "./CommentItem";
 import TestCaseItem from "./TestCaseItem";
+import InputField from "./InputField";
+import axios from "axios";
+import SelectField from "./SelectField";
 
-function BugEditor() {
-
-  const [comments, setComments] = useState([
-    { id: nanoid(), comment: "This is a comment", author: "Michael Allgeier", dateCreated: "NOV 6, 2021"},
-    { id: nanoid(), comment: "This is also a comment", author: "Mike Jones", dateCreated: "NOV 9, 2021"},
-    { id: nanoid(), comment: "This is also also a comment", author: "Adam Smith", dateCreated: "NOV 10, 2021"},
-  ]);
+function BugEditor({ auth, showError, showSuccess }) {
+  const { bugId } = useParams();
+  const [bug, setBug] = useState(null);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [stepsToReproduce, setStepsToReproduce] = useState('');
+  const [classification, setClassification] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [closed, setClosed] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [pending, setPending] = useState(true);
 
   const [newCommentText, setNewCommentText] = useState('');
-
-  const [testCases, setTestCases] = useState([
-    { id: nanoid(), testCaseTitle: "This is a test case", testCaseBody:"", author: "Michael Allgeier", dateCreated: "NOV 8, 2021", execution: "Unexecuted"},
-    { id: nanoid(), testCaseTitle: "This is also a test case", testCaseBody:"", author: "Mike Jones", dateCreated: "NOV 11, 2021", execution: "Passed", dateExecuted: "NOV 12, 2021", executedBy: "John Doe"},
-    { id: nanoid(), testCaseTitle: "This is also also a test case", testCaseBody:"", author: "Adam Smith", dateCreated: "NOV 12, 2021", execution: "Failed", dateExecuted: "NOV 12, 2021", executedBy: "John Doe"},
-  ]);
 
   const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
   const [newTestCaseBody, setNewTestCaseBody] = useState('');
 
-  function onPostComment(evt) {
+  useEffect(() => {
+    setPending(true);
+    setError('');
+    setSuccess('');
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
+      method: 'get',
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+    .then((res) => {
+      setPending(false);
+      setBug(res.data);
+      setTitle(res.data.title);
+      setDescription(res.data.description);
+      setStepsToReproduce(res.data.stepsToReproduce);
+      setClassification(res.data.classification);
+      setAssignedTo(res.data?.assignedTo?.fullName);
+      setClosed(res.data.closed);
+      showSuccess('Bug Loaded!');
+    })
+    .catch((err) => {
+      setPending(false);
+      setError(err.message);
+      showError(err.message);
+    })
+  }, [auth, bugId, showError, showSuccess]);
+
+  function onClickSubmitEdit(evt) {
     evt.preventDefault();
-    if (newCommentText) {
-      const comment = { id: nanoid(), comment: newCommentText, author: "Michael Allgeier", dateCreated: "placeholder" };
-      setComments([...comments, comment]);
-      setNewCommentText('');
-    }
+
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
+      method: 'put',
+      headers: {
+        authorization: `Bearer ${auth?.token}`
+      },
+      data: {title, description, stepsToReproduce},
+    })
+    .then((res) => {
+      setPending(false);
+      res.data.title = title;
+      res.data.description = description;
+      res.data.stepsToReproduce = stepsToReproduce;
+      setError('');
+      setSuccess('Bug Updated!');
+      showSuccess('Bug Updated!');
+    })
+    .catch((err) => {
+      setPending(false);
+      const resError = err?.response?.data?.error;
+      if(resError) {
+        if (typeof resError === 'string') {
+          setError(resError);
+          showError(resError);
+        } else if (resError.details) {
+          setError(_.map(resError.details, x => <div>{x.message}</div>))
+        } else {
+          setError(JSON.stringify(resError));
+        }
+      } else {
+        setError(err.message);
+        showError(resError);
+      }
+    })
   }
 
-  function onPostTestCase(evt) {
+  function onClickSubmitClassification(evt) {
     evt.preventDefault();
-    if (newTestCaseTitle && newTestCaseBody) {
-      const testCase = { id: nanoid(), testCaseTitle: newTestCaseTitle, testCaseBody: newTestCaseBody, author: "Mike Jones", dateCreated: "NOV 14, 2021", execution: "Failed", dateExecuted: "NOV 15, 2021", executedBy: "John Doe"};
-      setTestCases([...testCases, testCase]);
-      setNewTestCaseTitle('');
-      setNewTestCaseBody('');
-    }
+
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/classify`, {
+      method: 'put',
+      headers: {
+        authorization: `Bearer ${auth?.token}`
+      },
+      data: {classification},
+    })
+    .then((res) => {
+      setPending(false);
+      res.data.classification = classification;
+      setError('');
+      setSuccess('Bug Classified!');
+      showSuccess('Bug Classified!');
+    })
+    .catch((err) => {
+      setPending(false);
+      const resError = err?.response?.data?.error;
+      if(resError) {
+        if (typeof resError === 'string') {
+          setError(resError);
+          showError(resError);
+        } else if (resError.details) {
+          setError(_.map(resError.details, x => <div>{x.message}</div>))
+        } else {
+          setError(JSON.stringify(resError));
+        }
+      } else {
+        setError(err.message);
+        showError(resError);
+      }
+    })
   }
 
-  function onChangeCommentText(evt) {
-    const newValue = evt.currentTarget.value;
-    console.log(newValue);
-    setNewCommentText(newValue);
+  function onClickSubmitAssignment(evt) {
+    evt.preventDefault();
+
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/assign`, {
+      method: 'put',
+      headers: {
+        authorization: `Bearer ${auth?.token}`
+      },
+      data: {assignedTo},
+    })
+    .then((res) => {
+      setPending(false);
+      res.data.assignedTo = assignedTo;
+      setError('');
+      setSuccess('User Assigned to Bug!');
+      showSuccess('User Assigned to Bug!');
+    })
+    .catch((err) => {
+      setPending(false);
+      const resError = err?.response?.data?.error;
+      if(resError) {
+        if (typeof resError === 'string') {
+          setError(resError);
+          showError(resError);
+        } else if (resError.details) {
+          setError(_.map(resError.details, x => <div>{x.message}</div>))
+        } else {
+          setError(JSON.stringify(resError));
+        }
+      } else {
+        setError(err.message);
+        showError(resError);
+      }
+    })
   }
 
-  function onChangeTestCaseTitle(evt) {
-    const newValue = evt.currentTarget.value;
-    setNewTestCaseTitle(newValue);
+  function onClickCloseBug(evt) {
+    evt.preventDefault();
+
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/assign`, {
+      method: 'put',
+      headers: {
+        authorization: `Bearer ${auth?.token}`
+      },
+      data: {closed},
+    })
+    .then((res) => {
+      setPending(false);
+      res.data.closed = closed;
+      setError('');
+      setSuccess('Bug Closed!');
+      showSuccess('Bug Closed!');
+    })
+    .catch((err) => {
+      setPending(false);
+      const resError = err?.response?.data?.error;
+      if(resError) {
+        if (typeof resError === 'string') {
+          setError(resError);
+          showError(resError);
+        } else if (resError.details) {
+          setError(_.map(resError.details, x => <div>{x.message}</div>))
+        } else {
+          setError(JSON.stringify(resError));
+        }
+      } else {
+        setError(err.message);
+        showError(resError);
+      }
+    })
   }
 
-  function onChangeTestCaseBody(evt) {
+  function onInputChange(evt, setValue) {
     const newValue = evt.currentTarget.value;
-    setNewTestCaseBody(newValue);
+    setValue(newValue);
   }
+
+  // function onPostComment(evt) {
+  //   evt.preventDefault();
+  //   if (newCommentText) {
+  //     const comment = { id: nanoid(), comment: newCommentText, author: "Michael Allgeier", dateCreated: "placeholder" };
+  //     setComments([...comments, comment]);
+  //     setNewCommentText('');
+  //   }
+  // }
+
+  // function onPostTestCase(evt) {
+  //   evt.preventDefault();
+  //   if (newTestCaseTitle && newTestCaseBody) {
+  //     const testCase = { id: nanoid(), testCaseTitle: newTestCaseTitle, testCaseBody: newTestCaseBody, author: "Mike Jones", dateCreated: "NOV 14, 2021", execution: "Failed", dateExecuted: "NOV 15, 2021", executedBy: "John Doe"};
+  //     setTestCases([...testCases, testCase]);
+  //     setNewTestCaseTitle('');
+  //     setNewTestCaseBody('');
+  //   }
+  // }
+
+  // function onChangeCommentText(evt) {
+  //   const newValue = evt.currentTarget.value;
+  //   console.log(newValue);
+  //   setNewCommentText(newValue);
+  // }
+
+  // function onChangeTestCaseTitle(evt) {
+  //   const newValue = evt.currentTarget.value;
+  //   setNewTestCaseTitle(newValue);
+  // }
+
+  // function onChangeTestCaseBody(evt) {
+  //   const newValue = evt.currentTarget.value;
+  //   setNewTestCaseBody(newValue);
+  // }
 
   return (
     <div className="BugEditor">
-      <h1 className="BugEditor-Header m-3 text-center">Bug Name</h1>
-      <form className="BugEditor-EditBug-Form m-3 p-3">
-        <h2 className="BugEditor-EditBug-Header">Edit Bug</h2>
-        <label htmlFor="BugEditor-EditBug-BugName" className="form-label">Name</label>
-        <input id="BugEditor-EditBug-BugName" className="form-control"/>
-        <label htmlFor="BugEditor-EditBug-BugDescription" className="mt-3 form-label">Description</label>
-        <textarea id="BugEditor-EditBug-BugDescription" className="form-control"/>
-        <label htmlFor="BugEditor-EditBug-BugStepsToReproduce" className="mt-3 form-label">Steps To Reproduce</label>
-        <textarea id="BugEditor-EditBug-BugStepsToReproduce" className="form-control"/>
+      {pending && (
+        <div className="spinner-border text-light" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      )}
+      {!pending && bug && (
+        <div>
+          <h1 className="BugEditor-Header m-3 text-center">{bug?.title}</h1>
+          <form>
+            <h2>Edit Bug</h2>
+            <InputField 
+              label="Title"
+              id="BugEditor-Title"
+              type="text"
+              value={title}
+              onChange={(evt) => onInputChange(evt, setTitle)}
+            />
+            <InputField 
+              label="Description"
+              id="BugEditor-Description"
+              type="text"
+              value={description}
+              onChange={(evt) => onInputChange(evt, setDescription)}
+            />
+            <InputField 
+              label="Steps To Reproduce"
+              id="BugEditor-StepsToReproduce"
+              type="text"
+              value={stepsToReproduce}
+              onChange={(evt) => onInputChange(evt, setStepsToReproduce)}
+            />
+            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+              Submit Edit
+            </button>
+          </form>
+          <form className="mt-3">
+            <SelectField 
+              label="Classification"
+              id="BugEditor-Classification"
+              children=""
+              type="text"
+              onChange={(evt) => onInputChange(evt, setClassification)}
+            />
+            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitClassification(evt)}>
+              Classify
+            </button>
+          </form>
+          <form className="mt-3">
+            <SelectField 
+              label="Assigned To"
+              id="BugEditor-AssignedTo"
+              children=""
+              type="text"
+              onChange={(evt) => onInputChange(evt, setAssignedTo)}
+            />
+            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitAssignment(evt)}>
+              Assign Bug
+            </button>
+          </form>
+          <form className="mt-3">
+            <SelectField 
+              label="Bug Closed"
+              id="BugEditor-Closed"
+              children=""
+              type="text"
+              onChange={(evt) => onInputChange(evt, setClosed)}
+            />
+            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickCloseBug(evt)}>
+              Close Bug
+            </button>
+          </form>
+        </div>
+      )}
+      {error && <div className="mt-1 text-danger">{error}</div>}
+      {success && <div className="mt-1 text-success">{success}</div>}
+      {/* <form className="BugEditor-EditBug-Form m-3 p-3">
+        
+        
         <label htmlFor="BugEditor-BugAuthor" className="mt-3 form-label">Author</label>
         <input id="BugEditor-BugAuthor" className="form-control" readOnly/>
         <label htmlFor="BugEditor-BugDateCreated" className="mt-3 form-label">Date Created</label>
@@ -78,8 +328,8 @@ function BugEditor() {
         <label htmlFor="BugEditor-EditBug-BugClassification" className="mt-3 form-label">Classification</label>
         <input id="BugEditor-EditBug-BugClassification" className="form-control"/>
         <button type="button" className="EditBug-Submit btn btn-success my-3">Submit Edit</button>
-      </form>
-      <div className="BugEditor-CommentList m-3">
+      </form> */}
+      {/* <div className="BugEditor-CommentList m-3">
         <h2 className="BugEditor-BugComments-Header">Comment List</h2>
         <div>
           {_.map(comments, comment => (
@@ -114,7 +364,7 @@ function BugEditor() {
         <label htmlFor="BugEditor-BugTestCases-TestCaseBody" className="form-label mt-3">Body</label>
         <textarea id="BugEditor-BugTestCases-TestCaseBody" className="form-control" value={newTestCaseBody} onChange={(evt) => onChangeTestCaseBody(evt)}/>
         <button type="submit" className="AddTestCase-Submit btn btn-success my-3" onClick={(evt) => onPostTestCase(evt)}>Post Test Case</button>
-      </form>
+      </form> */}
     </div>
   );
 }

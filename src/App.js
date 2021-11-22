@@ -64,7 +64,7 @@ function App() {
           <Route path="/login" element={<LoginForm onLogin={onLogin} showError={showError} /> } />
           <Route path="/register" element={<RegisterForm onLogin={onLogin} showError={showError}/> } />
           <Route path="/bug/list" element={<BugList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
-          <Route path="/bug/:bugId" element={<BugEditor/> } />
+          <Route path="/bug/:bugId" element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/list" element={<UserList/> } />
           <Route path="/user/:userId" element={<UserEditor/> } />
           <Route path="*" element={<NotFound/> } />

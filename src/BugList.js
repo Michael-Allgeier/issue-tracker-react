@@ -13,6 +13,7 @@ function BugList({ auth, showError, showSuccess }) {
     setError('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/list`, {
       method: 'get',
+      params: {pageSize: 1000, closed: true},
       headers: {
         authorization: `Bearer ${auth?.token}`
       }
@@ -29,21 +30,33 @@ function BugList({ auth, showError, showSuccess }) {
     })
     .catch(err => {
       setPending(false);
-      setError(err.message);
-      showError(err.message);
+      const resError = err?.response?.data?.error;
+      if(resError) {
+        if (typeof resError === 'string') {
+          setError(resError);
+          showError(resError);
+        } else if (resError.details) {
+          setError(_.map(resError.details, x => <div>{x.message}</div>))
+        } else {
+          setError(JSON.stringify(resError));
+        }
+      } else {
+        setError(err.message);
+        showError(resError);
+      }
     });
   }, [auth, showError, showSuccess])
 
   return (
     <div>
-      <h1>Bug List</h1>
+      <h1 className="text-center">Bug List</h1>
       {pending && (
         <div className="spinner-border text-light" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
       {error && <div className="text-danger">{error}</div>}
-      {!pending && !error && _.isEmpty(items) && (<div>No Pets Found</div>)}
+      {!pending && !error && _.isEmpty(items) && (<div>No Bugs Found</div>)}
       {_.map(items, item => (
         <BugListItem 
           key={item._id}
