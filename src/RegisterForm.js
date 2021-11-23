@@ -49,8 +49,8 @@ function RegisterForm({ onLogin, showError }) {
     setSuccess('');
 
     if (emailError || passwordError || confirmEmailError || confirmPasswordError || givenNameError || familyNameError || fullNameError) {
-      setError('Please fix errors above');
-      showError('Please fix errors above');
+      setError('Please fix errors');
+      showError('Please fix errors');
       return;
     }
 

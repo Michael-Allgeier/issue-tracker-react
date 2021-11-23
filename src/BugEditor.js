@@ -14,16 +14,26 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [description, setDescription] = useState('');
   const [stepsToReproduce, setStepsToReproduce] = useState('');
   const [classification, setClassification] = useState('');
-  const [assignedTo, setAssignedTo] = useState('');
-  const [closed, setClosed] = useState('');
+  const [assignedTo, setAssignedTo] = useState(null);
+  const [closed, setClosed] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [pending, setPending] = useState(true);
+  const [users, setUsers] = useState(null);
 
-  const [newCommentText, setNewCommentText] = useState('');
+  // const [newCommentText, setNewCommentText] = useState('');
 
-  const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
-  const [newTestCaseBody, setNewTestCaseBody] = useState('');
+  // const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
+  // const [newTestCaseBody, setNewTestCaseBody] = useState('');
+
+  const titleError =
+    !title ? 'Title is required' : '';
+  
+  const descriptionError =
+    !description ? 'Description is required' : '';
+  
+  const stepsToReproduceError =
+    !stepsToReproduce ? 'Steps to Reproduce is required' : '';
 
   useEffect(() => {
     setPending(true);
@@ -42,7 +52,7 @@ function BugEditor({ auth, showError, showSuccess }) {
       setDescription(res.data.description);
       setStepsToReproduce(res.data.stepsToReproduce);
       setClassification(res.data.classification);
-      setAssignedTo(res.data?.assignedTo?.fullName);
+      setAssignedTo(res.data?.assignedTo?._id);
       setClosed(res.data.closed);
       showSuccess('Bug Loaded!');
     })
@@ -53,8 +63,33 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
   }, [auth, bugId, showError, showSuccess]);
 
+  useEffect(() => {
+    setError('');
+    setSuccess('');
+    axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
+      method: 'get',
+      params: {pageSize: 1000, sortBy: "givenName"},
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+    .then((res) => {
+      setUsers(res.data);
+    })
+    .catch((err) => {
+      setError(err.message);
+      showError(err.message);
+    })
+  }, [auth, showError]);
+
   function onClickSubmitEdit(evt) {
     evt.preventDefault();
+
+    if (titleError || descriptionError || stepsToReproduceError) {
+      setError('Please fix errors');
+      showError('Please fix errors');
+      return;
+    }
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
       method: 'put',
@@ -135,7 +170,7 @@ function BugEditor({ auth, showError, showSuccess }) {
       headers: {
         authorization: `Bearer ${auth?.token}`
       },
-      data: {assignedTo},
+      data: {assignedToUserId: assignedTo},
     })
     .then((res) => {
       setPending(false);
@@ -166,7 +201,7 @@ function BugEditor({ auth, showError, showSuccess }) {
   function onClickCloseBug(evt) {
     evt.preventDefault();
 
-    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/assign`, {
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/close`, {
       method: 'put',
       headers: {
         authorization: `Bearer ${auth?.token}`
@@ -177,8 +212,13 @@ function BugEditor({ auth, showError, showSuccess }) {
       setPending(false);
       res.data.closed = closed;
       setError('');
-      setSuccess('Bug Closed!');
-      showSuccess('Bug Closed!');
+      if (!closed) {
+        setSuccess('Bug Opened!');
+        showSuccess('Bug Opened!');
+      } else {
+        setSuccess('Bug Closed!');
+        showSuccess('Bug Closed!');
+      }
     })
     .catch((err) => {
       setPending(false);
@@ -247,7 +287,7 @@ function BugEditor({ auth, showError, showSuccess }) {
         </div>
       )}
       {!pending && bug && (
-        <div>
+        <div className="BugEditor-Form p-3">
           <h1 className="BugEditor-Header m-3 text-center">{bug?.title}</h1>
           <form>
             <h2>Edit Bug</h2>
@@ -257,6 +297,7 @@ function BugEditor({ auth, showError, showSuccess }) {
               type="text"
               value={title}
               onChange={(evt) => onInputChange(evt, setTitle)}
+              error={titleError}
             />
             <InputField 
               label="Description"
@@ -264,6 +305,7 @@ function BugEditor({ auth, showError, showSuccess }) {
               type="text"
               value={description}
               onChange={(evt) => onInputChange(evt, setDescription)}
+              error={descriptionError}
             />
             <InputField 
               label="Steps To Reproduce"
@@ -271,51 +313,73 @@ function BugEditor({ auth, showError, showSuccess }) {
               type="text"
               value={stepsToReproduce}
               onChange={(evt) => onInputChange(evt, setStepsToReproduce)}
+              error={stepsToReproduceError}
             />
             <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
               Submit Edit
             </button>
           </form>
           <form className="mt-3">
-            <SelectField 
-              label="Classification"
-              id="BugEditor-Classification"
-              children=""
-              type="text"
-              onChange={(evt) => onInputChange(evt, setClassification)}
-            />
-            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitClassification(evt)}>
-              Classify
-            </button>
+            <div className="input-group mb-3">
+              <select 
+                aria-label="Classification"
+                id="BugEditor-Classification"
+                type="text"
+                onChange={(evt) => onInputChange(evt, setClassification)}
+                className="form-select"
+                value={classification}
+              >
+                <option value="Unclassified">Unclassified</option>
+                <option value="Approved">Approved</option>
+                <option value="Unapproved">Unapproved</option>
+                <option value="Duplicate">Duplicate</option>
+              </select>
+              <button className="btn btn-success" type="submit" onClick={(evt) => onClickSubmitClassification(evt)}>
+                Classify
+              </button>
+            </div>
           </form>
           <form className="mt-3">
-            <SelectField 
-              label="Assigned To"
-              id="BugEditor-AssignedTo"
-              children=""
-              type="text"
-              onChange={(evt) => onInputChange(evt, setAssignedTo)}
-            />
-            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitAssignment(evt)}>
-              Assign Bug
-            </button>
+            <div className="input-group mb-3">
+              <select 
+                label="Assigned To"
+                id="BugEditor-AssignedTo"
+                type="text"
+                onChange={(evt) => onInputChange(evt, setAssignedTo)}
+                className="form-select"
+              >
+                {_.map(users, user => (
+                  <option key={user._id} value={user._id}>{user.fullName + ' '} {!user.role ? ' ' : user.role + '  '}</option>
+                ))}
+              </select>
+              <button className="btn btn-success" type="submit" onClick={(evt) => onClickSubmitAssignment(evt)}>
+                Assign Bug
+              </button>
+            </div>
           </form>
           <form className="mt-3">
-            <SelectField 
-              label="Bug Closed"
-              id="BugEditor-Closed"
-              children=""
-              type="text"
-              onChange={(evt) => onInputChange(evt, setClosed)}
-            />
-            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickCloseBug(evt)}>
-              Close Bug
-            </button>
+            <div className="input-group mb-3">
+              <select 
+                label="Bug Closed"
+                id="BugEditor-Closed"
+                children=""
+                type="text"
+                onChange={(evt) => onInputChange(evt, setClosed)}
+                className="form-select"
+                value={closed}
+              >
+                <option value={true}>Close</option>
+                <option value={false}>Open</option>
+              </select>
+              <button className="btn btn-success" type="submit" onClick={(evt) => onClickCloseBug(evt)}>
+                Update
+              </button>
+            </div>
           </form>
+          {error && <div className="mt-1 text-danger">{error}</div>}
+          {success && <div className="mt-1 text-success">{success}</div>}
         </div>
       )}
-      {error && <div className="mt-1 text-danger">{error}</div>}
-      {success && <div className="mt-1 text-success">{success}</div>}
       {/* <form className="BugEditor-EditBug-Form m-3 p-3">
         
         

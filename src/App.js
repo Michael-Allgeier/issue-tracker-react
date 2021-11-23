@@ -36,11 +36,11 @@ function App() {
   }
 
   function showError(message) {
-    toast(message, {type: 'error', position: 'bottom-right'});
+    toast(message, {type: 'error', position: 'top-right'});
   }
 
   function showSuccess(message) {
-    toast(message, {type: 'success', position: 'bottom-right'});
+    toast(message, {type: 'success', position: 'top-right'});
   }
 
   // function onClickBugList(evt) {
@@ -65,7 +65,7 @@ function App() {
           <Route path="/register" element={<RegisterForm onLogin={onLogin} showError={showError}/> } />
           <Route path="/bug/list" element={<BugList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/:bugId" element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
-          <Route path="/user/list" element={<UserList/> } />
+          <Route path="/user/list" element={<UserList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/:userId" element={<UserEditor/> } />
           <Route path="*" element={<NotFound/> } />
         </Routes>

@@ -1,17 +1,20 @@
+import { Link } from 'react-router-dom';
+import moment from 'moment';
 
-function UserListItem({ user, onEditClick }) {
+function UserListItem({ item }) {
   return (
-    <div id={`user-${user.id}`} className="UserListItem card my-2">
-      <div className="d-flex align-items-center">
-        <div id={`user-${user.id}-name`} className="card-title fs-3 flex-grow-1 user-name px-2">
-          <a href="#EditUser" className="UserList-Title" onClick={(evt) => onEditClick(evt)}>{user.name}</a>
+    <div className="card text-dark mt-3">
+      <div className="card-body align-items-center">
+        <div className="card-title fs-4">
+          <Link to={`/user/${item._id}`} className="text-black">{item.fullName}</Link>
         </div>
-        <div id={`user-${user.id}-email`} className="card-text user-email mx-2 text-secondary">{user.email}</div>
-        <div id={`user-${user.id}-role`} className="card-text user-role mx-2 text-secondary">{user.role}</div>
-        {/* <button id="edit-user-btn" type="button" className="btn btn-sm btn-outline-dark me-2" title="Edit User">
-          <i className="fas fa-edit fa-lg"></i>
-          <span className="visually-hidden">Edit User</span>
-        </button> */}
+        <div className="card-text">
+          <span className="me-2 badge bg-primary">{item.email}</span>
+          {!item.role ? (<span className="me-2 badge bg-danger">No Role</span>) : (<span className="me-2 badge bg-primary">{item.role + ' '}</span>)}
+        </div>
+      </div>
+      <div className="card-footer text-center">
+        {item.createdOn && (<span>Registered {moment(item.createdOn).fromNow()}</span>)}
       </div>
     </div>
   );

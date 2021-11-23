@@ -31,8 +31,8 @@ function LoginForm({ onLogin, showError }) {
     setSuccess('');
 
     if (emailError || passwordError) {
-      setError('Please fix errors above');
-      showError('Please fix errors above');
+      setError('Please fix errors');
+      showError('Please fix errors');
       return;
     }
 
