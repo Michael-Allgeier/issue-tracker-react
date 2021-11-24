@@ -66,7 +66,7 @@ function App() {
           <Route path="/bug/list" element={<BugList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/:bugId" element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/list" element={<UserList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
-          <Route path="/user/:userId" element={<UserEditor/> } />
+          <Route path="/user/:userId" element={<UserEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="*" element={<NotFound/> } />
         </Routes>
       </main>

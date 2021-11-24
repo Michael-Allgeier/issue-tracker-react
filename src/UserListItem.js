@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import _ from 'lodash';
 
 function UserListItem({ item }) {
+
+  const roles = item.role;
+
   return (
     <div className="card text-dark mt-3">
       <div className="card-body align-items-center">
@@ -10,7 +14,10 @@ function UserListItem({ item }) {
         </div>
         <div className="card-text">
           <span className="me-2 badge bg-primary">{item.email}</span>
-          {!item.role ? (<span className="me-2 badge bg-danger">No Role</span>) : (<span className="me-2 badge bg-primary">{item.role + ' '}</span>)}
+          {!item.role && (<span className="me-2 badge bg-danger">No Role</span>) }
+          {_.map(roles, role => (
+            <span key={role} value={role} className="me-2 badge bg-primary">{role}</span>
+          ))}
         </div>
       </div>
       <div className="card-footer text-center">

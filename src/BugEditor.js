@@ -100,9 +100,9 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
     .then((res) => {
       setPending(false);
-      res.data.title = title;
-      res.data.description = description;
-      res.data.stepsToReproduce = stepsToReproduce;
+      // res.data.title = title;
+      // res.data.description = description;
+      // res.data.stepsToReproduce = stepsToReproduce;
       setError('');
       setSuccess('Bug Updated!');
       showSuccess('Bug Updated!');
@@ -244,41 +244,6 @@ function BugEditor({ auth, showError, showSuccess }) {
     setValue(newValue);
   }
 
-  // function onPostComment(evt) {
-  //   evt.preventDefault();
-  //   if (newCommentText) {
-  //     const comment = { id: nanoid(), comment: newCommentText, author: "Michael Allgeier", dateCreated: "placeholder" };
-  //     setComments([...comments, comment]);
-  //     setNewCommentText('');
-  //   }
-  // }
-
-  // function onPostTestCase(evt) {
-  //   evt.preventDefault();
-  //   if (newTestCaseTitle && newTestCaseBody) {
-  //     const testCase = { id: nanoid(), testCaseTitle: newTestCaseTitle, testCaseBody: newTestCaseBody, author: "Mike Jones", dateCreated: "NOV 14, 2021", execution: "Failed", dateExecuted: "NOV 15, 2021", executedBy: "John Doe"};
-  //     setTestCases([...testCases, testCase]);
-  //     setNewTestCaseTitle('');
-  //     setNewTestCaseBody('');
-  //   }
-  // }
-
-  // function onChangeCommentText(evt) {
-  //   const newValue = evt.currentTarget.value;
-  //   console.log(newValue);
-  //   setNewCommentText(newValue);
-  // }
-
-  // function onChangeTestCaseTitle(evt) {
-  //   const newValue = evt.currentTarget.value;
-  //   setNewTestCaseTitle(newValue);
-  // }
-
-  // function onChangeTestCaseBody(evt) {
-  //   const newValue = evt.currentTarget.value;
-  //   setNewTestCaseBody(newValue);
-  // }
-
   return (
     <div className="BugEditor">
       {pending && (
@@ -342,7 +307,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           <form className="mt-3">
             <div className="input-group mb-3">
               <select 
-                label="Assigned To"
+                aria-label="Assigned To"
                 id="BugEditor-AssignedTo"
                 type="text"
                 onChange={(evt) => onInputChange(evt, setAssignedTo)}
@@ -360,7 +325,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           <form className="mt-3">
             <div className="input-group mb-3">
               <select 
-                label="Bug Closed"
+                aria-label="Bug Closed"
                 id="BugEditor-Closed"
                 children=""
                 type="text"
@@ -380,19 +345,6 @@ function BugEditor({ auth, showError, showSuccess }) {
           {success && <div className="mt-1 text-success">{success}</div>}
         </div>
       )}
-      {/* <form className="BugEditor-EditBug-Form m-3 p-3">
-        
-        
-        <label htmlFor="BugEditor-BugAuthor" className="mt-3 form-label">Author</label>
-        <input id="BugEditor-BugAuthor" className="form-control" readOnly/>
-        <label htmlFor="BugEditor-BugDateCreated" className="mt-3 form-label">Date Created</label>
-        <input id="BugEditor-BugDateCreated" type="date" className="form-control" readOnly/>
-        <label htmlFor="BugEditor-EditBug-BugAssignment" className="mt-3 form-label">Assigned To</label>
-        <input id="BugEditor-EditBug-BugAssignment" className="form-control"/>
-        <label htmlFor="BugEditor-EditBug-BugClassification" className="mt-3 form-label">Classification</label>
-        <input id="BugEditor-EditBug-BugClassification" className="form-control"/>
-        <button type="button" className="EditBug-Submit btn btn-success my-3">Submit Edit</button>
-      </form> */}
       {/* <div className="BugEditor-CommentList m-3">
         <h2 className="BugEditor-BugComments-Header">Comment List</h2>
         <div>
