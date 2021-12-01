@@ -9,7 +9,8 @@ import UserEditor from './UserEditor';
 import Navbar from './Navbar';
 import NotFound  from './NotFound';
 import Footer from './Footer';
-import { useState } from 'react';
+import jwt from 'jsonwebtoken';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,16 +24,40 @@ function App() {
   //   setScreen("Register");
   // }
 
+  useEffect(() => {
+    if (localStorage) {
+      const storedAuthToken = localStorage.getItem('authToken');
+      if (storedAuthToken) {
+        const authPayload = jwt.decode(storedAuthToken);
+        if (authPayload) {
+          const auth = {
+            token: storedAuthToken,
+            payload: authPayload,
+            email: authPayload.email,
+            userId: authPayload._id
+          };
+          setAuth(auth);
+        }
+      }
+    }
+  }, []);
+
   function onLogin(auth) {
     setAuth(auth);
     navigate('/bug/list');
     showSuccess('Logged In!');
+    if (localStorage) {
+      localStorage.setItem('authToken', auth.token);
+    }
   }
 
   function onLogout() {
     setAuth(null);
     navigate('/login');
     showSuccess('Logged Out!');
+    if (localStorage) {
+      localStorage.removeItem('authToken');
+    }
   }
 
   function showError(message) {

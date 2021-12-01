@@ -22,6 +22,8 @@ function BugList({ auth, showError, showSuccess }) {
       setPending(false);
       if (_.isArray(res.data)) {
         setItems(res.data);
+        setError('');
+        showError(null);
         showSuccess('Bugs Loaded!');
       } else {
         setError('Expected an array');
