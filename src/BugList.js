@@ -9,6 +9,12 @@ function BugList({ auth, showError, showSuccess }) {
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
+    if(!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
     setPending(true);
     setError('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/list`, {
@@ -57,7 +63,7 @@ function BugList({ auth, showError, showSuccess }) {
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
-      {error && <div className="text-danger">{error}</div>}
+      {error && <div className="text-danger text-center">{error}</div>}
       {!pending && !error && _.isEmpty(items) && (<div>No Bugs Found</div>)}
       {_.map(items, item => (
         <BugListItem 

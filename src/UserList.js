@@ -9,6 +9,12 @@ function UserList({ auth, showError, showSuccess }) {
   const [pending, setPending] = useState(true);
 
   useEffect(() => {
+    if(!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
     setPending(true);
     setError('');
     axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
@@ -22,6 +28,7 @@ function UserList({ auth, showError, showSuccess }) {
       setPending(false);
       if (_.isArray(res.data)) {
         setItems(res.data); 
+        setError('');
         showSuccess('Users Loaded');
       } else {
         setError('Expected an array');
@@ -55,7 +62,7 @@ function UserList({ auth, showError, showSuccess }) {
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
-      {error && <div className="text-danger">{error}</div>}
+      {error && <div className="text-danger text-center">{error}</div>}
       {!pending && !error && _.isEmpty(items) && (<div>No Users Found</div>)}
       {_.map(items, item => (
         <UserListItem 
