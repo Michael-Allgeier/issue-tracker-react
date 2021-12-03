@@ -1,11 +1,11 @@
-import _ from "lodash";
-import { useState, useEffect } from "react";
+import _ from 'lodash';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import CommentItem from "./CommentItem";
-import TestCaseItem from "./TestCaseItem";
-import InputField from "./InputField";
-import axios from "axios";
-import SelectField from "./SelectField";
+import CommentItem from './CommentItem';
+import TestCaseItem from './TestCaseItem';
+import InputField from './InputField';
+import axios from 'axios';
+import SelectField from './SelectField';
 
 function BugEditor({ auth, showError, showSuccess }) {
   const { bugId } = useParams();
@@ -20,22 +20,33 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [success, setSuccess] = useState('');
   const [pending, setPending] = useState(true);
   const [users, setUsers] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [newComment, setNewComment] = useState('');
+  const [commentError, setCommentError] = useState('');
+  const [commentSuccess, setCommentSuccess] = useState('');
+  const [testCases, setTestCases] = useState(null);
+  const [newTestCase, setNewTestCase] = useState('');
+  const [testCaseError, setTestCaseError] = useState('');
+  const [testCaseSuccess, setTestCaseSuccess] = useState('');
 
   // const [newCommentText, setNewCommentText] = useState('');
 
   // const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
   // const [newTestCaseBody, setNewTestCaseBody] = useState('');
 
-  const titleError =
-    !title ? 'Title is required' : '';
-  
-  const descriptionError =
-    !description ? 'Description is required' : '';
-  
-  const stepsToReproduceError =
-    !stepsToReproduce ? 'Steps to Reproduce is required' : '';
+  const titleError = !title ? 'Title is required' : '';
+
+  const descriptionError = !description ? 'Description is required' : '';
+
+  const stepsToReproduceError = !stepsToReproduce ? 'Steps to Reproduce is required' : '';
 
   useEffect(() => {
+    if (!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
     setPending(true);
     setError('');
     setSuccess('');
@@ -45,42 +56,96 @@ function BugEditor({ auth, showError, showSuccess }) {
         authorization: `Bearer ${auth?.token}`,
       },
     })
-    .then((res) => {
-      setPending(false);
-      setBug(res.data);
-      setTitle(res.data.title);
-      setDescription(res.data.description);
-      setStepsToReproduce(res.data.stepsToReproduce);
-      setClassification(res.data.classification);
-      setAssignedTo(res.data?.assignedTo?._id);
-      setClosed(res.data.closed);
-      showSuccess('Bug Loaded!');
-    })
-    .catch((err) => {
-      setPending(false);
-      setError(err.message);
-      showError(err.message);
-    })
+      .then((res) => {
+        setPending(false);
+        setBug(res.data);
+        setTitle(res.data.title);
+        setDescription(res.data.description);
+        setStepsToReproduce(res.data.stepsToReproduce);
+        setClassification(res.data.classification);
+        setAssignedTo(res.data?.assignedTo?._id);
+        setClosed(res.data.closed);
+        showSuccess('Bug Loaded!');
+      })
+      .catch((err) => {
+        setPending(false);
+        setError(err.message);
+        showError(err.message);
+      });
   }, [auth, bugId, showError, showSuccess]);
 
   useEffect(() => {
+    if (!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
     setError('');
     setSuccess('');
     axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
       method: 'get',
-      params: {pageSize: 1000, sortBy: "givenName"},
+      params: { pageSize: 1000, sortBy: 'givenName' },
       headers: {
         authorization: `Bearer ${auth?.token}`,
       },
     })
-    .then((res) => {
-      setUsers(res.data);
-    })
-    .catch((err) => {
-      setError(err.message);
-      showError(err.message);
-    })
+      .then((res) => {
+        setUsers(res.data);
+      })
+      .catch((err) => {
+        setError(err.message);
+        showError(err.message);
+      });
   }, [auth, showError]);
+
+  useEffect(() => {
+    if (!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
+    setError('');
+    setSuccess('');
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/comment/list`, {
+      method: 'get',
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+      .then((res) => {
+        setComments(res.data);
+      })
+      .catch((err) => {
+        setError(err.message);
+        showError(err.message);
+      });
+  }, [bugId, auth, showError]);
+
+  useEffect(() => {
+    if (!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
+    setError('');
+    setSuccess('');
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/list`, {
+      method: 'get',
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+    })
+      .then((res) => {
+        setTestCases(res.data);
+      })
+      .catch((err) => {
+        setError(err.message);
+        showError(err.message);
+      });
+  }, [bugId, auth, showError]);
 
   function onClickSubmitEdit(evt) {
     evt.preventDefault();
@@ -94,36 +159,36 @@ function BugEditor({ auth, showError, showSuccess }) {
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
       method: 'put',
       headers: {
-        authorization: `Bearer ${auth?.token}`
+        authorization: `Bearer ${auth?.token}`,
       },
-      data: {title, description, stepsToReproduce},
+      data: { title, description, stepsToReproduce },
     })
-    .then((res) => {
-      setPending(false);
-      // res.data.title = title;
-      // res.data.description = description;
-      // res.data.stepsToReproduce = stepsToReproduce;
-      setError('');
-      setSuccess('Bug Updated!');
-      showSuccess('Bug Updated!');
-    })
-    .catch((err) => {
-      setPending(false);
-      const resError = err?.response?.data?.error;
-      if(resError) {
-        if (typeof resError === 'string') {
-          setError(resError);
-          showError(resError);
-        } else if (resError.details) {
-          setError(_.map(resError.details, x => <div>{x.message}</div>))
+      .then((res) => {
+        setPending(false);
+        // res.data.title = title;
+        // res.data.description = description;
+        // res.data.stepsToReproduce = stepsToReproduce;
+        setError('');
+        setSuccess('Bug Updated!');
+        showSuccess('Bug Updated!');
+      })
+      .catch((err) => {
+        setPending(false);
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === 'string') {
+            setError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setError(JSON.stringify(resError));
+          }
         } else {
-          setError(JSON.stringify(resError));
+          setError(err.message);
+          showError(resError);
         }
-      } else {
-        setError(err.message);
-        showError(resError);
-      }
-    })
+      });
   }
 
   function onClickSubmitClassification(evt) {
@@ -132,34 +197,34 @@ function BugEditor({ auth, showError, showSuccess }) {
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/classify`, {
       method: 'put',
       headers: {
-        authorization: `Bearer ${auth?.token}`
+        authorization: `Bearer ${auth?.token}`,
       },
-      data: {classification},
+      data: { classification },
     })
-    .then((res) => {
-      setPending(false);
-      res.data.classification = classification;
-      setError('');
-      setSuccess('Bug Classified!');
-      showSuccess('Bug Classified!');
-    })
-    .catch((err) => {
-      setPending(false);
-      const resError = err?.response?.data?.error;
-      if(resError) {
-        if (typeof resError === 'string') {
-          setError(resError);
-          showError(resError);
-        } else if (resError.details) {
-          setError(_.map(resError.details, x => <div>{x.message}</div>))
+      .then((res) => {
+        setPending(false);
+        res.data.classification = classification;
+        setError('');
+        setSuccess('Bug Classified!');
+        showSuccess('Bug Classified!');
+      })
+      .catch((err) => {
+        setPending(false);
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === 'string') {
+            setError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setError(JSON.stringify(resError));
+          }
         } else {
-          setError(JSON.stringify(resError));
+          setError(err.message);
+          showError(resError);
         }
-      } else {
-        setError(err.message);
-        showError(resError);
-      }
-    })
+      });
   }
 
   function onClickSubmitAssignment(evt) {
@@ -168,34 +233,34 @@ function BugEditor({ auth, showError, showSuccess }) {
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/assign`, {
       method: 'put',
       headers: {
-        authorization: `Bearer ${auth?.token}`
+        authorization: `Bearer ${auth?.token}`,
       },
-      data: {assignedToUserId: assignedTo},
+      data: { assignedToUserId: assignedTo },
     })
-    .then((res) => {
-      setPending(false);
-      res.data.assignedTo = assignedTo;
-      setError('');
-      setSuccess('User Assigned to Bug!');
-      showSuccess('User Assigned to Bug!');
-    })
-    .catch((err) => {
-      setPending(false);
-      const resError = err?.response?.data?.error;
-      if(resError) {
-        if (typeof resError === 'string') {
-          setError(resError);
-          showError(resError);
-        } else if (resError.details) {
-          setError(_.map(resError.details, x => <div>{x.message}</div>))
+      .then((res) => {
+        setPending(false);
+        res.data.assignedTo = assignedTo;
+        setError('');
+        setSuccess('User Assigned to Bug!');
+        showSuccess('User Assigned to Bug!');
+      })
+      .catch((err) => {
+        setPending(false);
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === 'string') {
+            setError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setError(JSON.stringify(resError));
+          }
         } else {
-          setError(JSON.stringify(resError));
+          setError(err.message);
+          showError(resError);
         }
-      } else {
-        setError(err.message);
-        showError(resError);
-      }
-    })
+      });
   }
 
   function onClickCloseBug(evt) {
@@ -204,39 +269,127 @@ function BugEditor({ auth, showError, showSuccess }) {
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/close`, {
       method: 'put',
       headers: {
-        authorization: `Bearer ${auth?.token}`
+        authorization: `Bearer ${auth?.token}`,
       },
-      data: {closed},
+      data: { closed },
     })
-    .then((res) => {
-      setPending(false);
-      res.data.closed = closed;
-      setError('');
-      if (!closed) {
-        setSuccess('Bug Opened!');
-        showSuccess('Bug Opened!');
-      } else {
-        setSuccess('Bug Closed!');
-        showSuccess('Bug Closed!');
-      }
-    })
-    .catch((err) => {
-      setPending(false);
-      const resError = err?.response?.data?.error;
-      if(resError) {
-        if (typeof resError === 'string') {
-          setError(resError);
-          showError(resError);
-        } else if (resError.details) {
-          setError(_.map(resError.details, x => <div>{x.message}</div>))
+      .then((res) => {
+        setPending(false);
+        res.data.closed = closed;
+        setError('');
+        if (!closed) {
+          setSuccess('Bug Opened!');
+          showSuccess('Bug Opened!');
         } else {
-          setError(JSON.stringify(resError));
+          setSuccess('Bug Closed!');
+          showSuccess('Bug Closed!');
         }
-      } else {
-        setError(err.message);
-        showError(resError);
-      }
+      })
+      .catch((err) => {
+        setPending(false);
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === 'string') {
+            setError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setError(JSON.stringify(resError));
+          }
+        } else {
+          setError(err.message);
+          showError(resError);
+        }
+      });
+  }
+
+  function onClickPostComment(evt) {
+    evt.preventDefault();
+    setCommentError('');
+    setCommentSuccess('');
+    setPending(true);
+
+    if (!newComment) {
+      setCommentError('Comment can not be empty!');
+    }
+
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/comment/new`, {
+      method: 'put',
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+      data: { comment: newComment },
     })
+      .then((res) => {
+        setPending(false);
+        res.data.comment = newComment;
+        setCommentError('');
+        setCommentSuccess('Comment Posted');
+        showSuccess('Comment Posted');
+      })
+      .catch((err) => {
+        setPending(false);
+        setCommentSuccess('');
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === 'string') {
+            setCommentError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setCommentError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setCommentError(JSON.stringify(resError));
+          }
+        } else {
+          setCommentError(err.message);
+          showError(resError);
+        }
+      });
+  }
+
+  function onClickAddTestCase(evt) {
+    evt.preventDefault();
+    setCommentError('');
+    setCommentSuccess('');
+    setPending(true);
+
+    if (!newTestCase) {
+      setCommentError('Comment can not be empty!');
+    }
+
+    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/new`, {
+      method: 'put',
+      headers: {
+        authorization: `Bearer ${auth?.token}`,
+      },
+      data: { testCase: newTestCase },
+    })
+      .then((res) => {
+        setPending(false);
+        res.data.testCase = newTestCase;
+        setTestCaseError('');
+        setTestCaseSuccess('Test Case Added');
+        showSuccess('Test Case Added');
+      })
+      .catch((err) => {
+        setPending(false);
+        setCommentSuccess('');
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          if (typeof resError === 'string') {
+            setTestCaseError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setTestCaseError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setTestCaseError(JSON.stringify(resError));
+          }
+        } else {
+          setTestCaseError(err.message);
+          showError(resError);
+        }
+      });
   }
 
   function onInputChange(evt, setValue) {
@@ -256,7 +409,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           <h1 className="BugEditor-Header m-3 text-center">{bug?.title}</h1>
           <form>
             <h2>Edit Bug</h2>
-            <InputField 
+            <InputField
               label="Title"
               id="BugEditor-Title"
               type="text"
@@ -264,7 +417,7 @@ function BugEditor({ auth, showError, showSuccess }) {
               onChange={(evt) => onInputChange(evt, setTitle)}
               error={titleError}
             />
-            <InputField 
+            <InputField
               label="Description"
               id="BugEditor-Description"
               type="text"
@@ -272,7 +425,7 @@ function BugEditor({ auth, showError, showSuccess }) {
               onChange={(evt) => onInputChange(evt, setDescription)}
               error={descriptionError}
             />
-            <InputField 
+            <InputField
               label="Steps To Reproduce"
               id="BugEditor-StepsToReproduce"
               type="text"
@@ -286,7 +439,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           </form>
           <form className="mt-3">
             <div className="input-group mb-3">
-              <select 
+              <select
                 aria-label="Classification"
                 id="BugEditor-Classification"
                 type="text"
@@ -306,15 +459,18 @@ function BugEditor({ auth, showError, showSuccess }) {
           </form>
           <form className="mt-3">
             <div className="input-group mb-3">
-              <select 
+              <select
                 aria-label="Assigned To"
                 id="BugEditor-AssignedTo"
                 type="text"
                 onChange={(evt) => onInputChange(evt, setAssignedTo)}
                 className="form-select"
+                value={assignedTo}
               >
-                {_.map(users, user => (
-                  <option key={user._id} value={user._id}>{user.fullName + ' '} {!user.role ? ' ' : user.role + '  '}</option>
+                {_.map(users, (user) => (
+                  <option key={user._id} value={user._id}>
+                    {user.fullName + ' '} {!user.role ? ' ' : user.role + '  '}
+                  </option>
                 ))}
               </select>
               <button className="btn btn-success" type="submit" onClick={(evt) => onClickSubmitAssignment(evt)}>
@@ -324,7 +480,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           </form>
           <form className="mt-3">
             <div className="input-group mb-3">
-              <select 
+              <select
                 aria-label="Bug Closed"
                 id="BugEditor-Closed"
                 children=""
@@ -343,6 +499,57 @@ function BugEditor({ auth, showError, showSuccess }) {
           </form>
           {error && <div className="mt-1 text-danger">{error}</div>}
           {success && <div className="mt-1 text-success">{success}</div>}
+
+          <div className="BugEditor-CommentList">
+            <h2>Comments</h2>
+            <div>
+              {!_.isEmpty(comments) ? (_.map(comments, (comment) => (
+                <CommentItem key={comment._id} comment={comment} />
+              ))) : <div>Be the First to Post a Comment for {bug?.title}!</div>}
+            </div>
+          </div>
+          <div className="BugEditor-AddComment">
+            <InputField
+              label=""
+              id="AddComment"
+              type="text"
+              value={newComment}
+              onChange={(evt) => onInputChange(evt, setNewComment)}
+              placeholder="Comment..."
+            />
+            <button className="btn btn-success" type="submit" onClick={(evt) => onClickPostComment(evt)}>
+              Post
+            </button>
+            {commentError && <div className="text-danger">{commentError}</div>}
+            {commentSuccess && <div className="text-success">{commentSuccess}</div>}
+          </div>
+
+          <div className="BugEditor-TestCaseList mt-3">
+            <h2>Test Cases</h2>
+            <div>
+                {!_.isEmpty(testCases) ? (_.map(testCases, (testCase) => (
+                  <TestCaseItem 
+                    key={testCase._id}
+                    testCase={testCase}
+                  />
+                ))) : <div>There Are No Test Cases for {bug?.title}!</div>}
+            </div>
+          </div>
+          <div className="BugEditor-AddTestCase mt-3">
+            <InputField 
+              label="Add New Test Case"
+              id="AddTestCase"
+              type="text"
+              value={newTestCase}
+              onChange={(evt) => onInputChange(evt, setNewTestCase)}
+              placeholder="Test Case Title..."
+            />
+            <button className="btn btn-success" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
+              Add
+            </button>
+            {testCaseError && <div className="text-danger">{testCaseError}</div>}
+            {testCaseSuccess && <div className="text-success">{testCaseSuccess}</div>}
+          </div>
         </div>
       )}
       {/* <div className="BugEditor-CommentList m-3">

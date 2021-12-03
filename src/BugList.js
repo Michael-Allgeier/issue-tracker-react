@@ -19,7 +19,7 @@ function BugList({ auth, showError, showSuccess }) {
     setError('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/list`, {
       method: 'get',
-      params: {pageSize: 1000, closed: true},
+      params: {pageSize: 1000, role: 'TM'},
       headers: {
         authorization: `Bearer ${auth?.token}`
       }

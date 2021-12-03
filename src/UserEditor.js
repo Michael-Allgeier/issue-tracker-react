@@ -5,6 +5,7 @@ import InputField from "./InputField";
 import SelectField from "./SelectField";
 import axios from "axios";
 
+
 function UserEditor({ auth, showError, showSuccess }) {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
@@ -14,7 +15,8 @@ function UserEditor({ auth, showError, showSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [roles, setRoles] = useState(null);
+  const [role, setRole] = useState(null);
+  //const [rolesArray, setRolesArray] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [pending, setPending] = useState(true);
@@ -27,7 +29,14 @@ function UserEditor({ auth, showError, showSuccess }) {
 
   const confirmPasswordError = confirmPassword !== password ? 'Passwords do not match' : '';
 
+
   useEffect(() => {
+    if(!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
     setPending(true);
     setError('');
     setSuccess('');
@@ -44,7 +53,7 @@ function UserEditor({ auth, showError, showSuccess }) {
       setFamilyName(res.data.familyName);
       setFullName(res.data.fullName);
       setEmail(res.data.email);
-      setRoles(res.data.role);
+      setRole(res.data.role);
       showSuccess('User Loaded!');
     })
     .catch((err) => {
@@ -67,7 +76,7 @@ function UserEditor({ auth, showError, showSuccess }) {
       headers: {
         authorization: `Bearer ${auth?.token}`
       },
-      data: {givenName, familyName, fullName, password: password ? password : undefined, roles}
+      data: {givenName, familyName, fullName, password: password ? password : undefined, role}
     })
     .then((res) => {
       setPending(false);
@@ -103,25 +112,37 @@ function UserEditor({ auth, showError, showSuccess }) {
     })
   }
 
+  // function hasRole(thisRole) {
+  //   let includesRole = false;
+  //   if (role.includes(thisRole)) {
+  //     includesRole = true;
+  //   }
+
+  //   return includesRole;
+  // }
+
   function onInputChange(evt, setValue) {
     const newValue = evt.currentTarget.value;
     setValue(newValue);
   }
 
+  const rolesArray = [];
+
   function onClickCheckbox(evt) {
     const checked = evt.currentTarget.checked;
     const newValue = evt.currentTarget.value;
-    const rolesArray = roles;
-    console.log(rolesArray);
+
+    console.log(checked);
 
     if (checked) {
-      rolesArray.push(newValue);
-      setRoles(rolesArray);
+      //rolesArray.push(newValue);
     } else {
-      const index = rolesArray.findIndex(newValue);
-      rolesArray.splice(index, 1);
-      setRoles(rolesArray);
+      const index = rolesArray.indexOf(newValue);
+      //rolesArray.splice(index, 1);
     }
+
+    console.log(rolesArray);
+    //setRole(rolesArray);
   }
 
   return (
@@ -206,40 +227,48 @@ function UserEditor({ auth, showError, showSuccess }) {
             <option value="BA">BA</option>
           </SelectField> */}
           <div>
-            <div>Roles</div>
-            <div className="text-danger">All Selected Roles Will Be Assigned To {user?.fullName}</div>
+            <div>Roles*</div>
           </div>
           <div className="form-check">
+            {/* {hasRole('DEV') ? (<input className="form-check-input" type="checkbox" value="DEV" id="flexCheckDev" checked onClick={(evt) => onClickCheckbox(evt)}/>) : <input className="form-check-input" type="checkbox" value="DEV" id="flexCheckDev" onClick={(evt) => onClickCheckbox(evt)}/>} */}
             <input className="form-check-input" type="checkbox" value="DEV" id="flexCheckDev" onClick={(evt) => onClickCheckbox(evt)}/>
-            <label className="form-check-label" for="flexCheckDev">
+            <label className="form-check-label" htmlFor="flexCheckDev">
               DEV
             </label>
           </div>
           <div className="form-check">
             <input className="form-check-input" type="checkbox" value="QA" id="flexCheckQA" onClick={(evt) => onClickCheckbox(evt)}/>
-            <label className="form-check-label" for="flexCheckQA">
+            <label className="form-check-label" htmlFor="flexCheckQA">
               QA
             </label>
           </div>
           <div className="form-check">
             <input className="form-check-input" type="checkbox" value="TM" id="flexCheckTM" onClick={(evt) => onClickCheckbox(evt)}/>
-            <label className="form-check-label" for="flexCheckTM">
+            <label className="form-check-label" htmlFor="flexCheckTM">
               TM
             </label>
           </div>
           <div className="form-check">
             <input className="form-check-input" type="checkbox" value="BA" id="flexCheckBA" onClick={(evt) => onClickCheckbox(evt)}/>
-            <label className="form-check-label" for="flexCheckBA">
+            <label className="form-check-label" htmlFor="flexCheckBA">
               BA
+            </label>
+          </div>
+          <div className="form-check">
+            <input className="form-check-input" type="checkbox" value="PM" id="flexCheckPM" onClick={(evt) => onClickCheckbox(evt)}/>
+            <label className="form-check-label" htmlFor="flexCheckPM">
+              PM
             </label>
           </div>
           <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
             Submit Edit
           </button>
         </form>
+        <div className="my-2">*All Selected Roles Will Be Assigned To {user?.fullName}</div>
+        <div>*If An Unchecked Role Is Currently Assigned, It Will Be Unassigned From {user?.fullName}</div>
         {error && <div className="mt-1 text-danger">{error}</div>}
         {success && <div className="mt-1 text-success">{success}</div>}
-        </div>
+      </div>
       )}
     </div>
   );
