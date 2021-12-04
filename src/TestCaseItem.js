@@ -10,16 +10,16 @@ function TestCaseItem({ testCase }) {
         </div>
         <div>
           {testCase.execution === "Passed" && (
-            <div className="d-flex align-items-center text-muted">
+            <div className="text-muted">
               <div className="mx-2">Executed By {testCase.executedBy.fullName} &bull; {moment(testCase.executedOn).fromNow()}</div>
               <div id={`testCase-${testCase._id}-execution`} className="card-text testCase-execution mx-2 text-success">{testCase.execution}</div>
             </div>
           )}
           {testCase.execution === "Failed" && (
-            <div className="d-flex align-items-center text-muted">
-            <div className="mx-2">Executed By {testCase.executedBy.fullName} &bull; {moment(testCase.executedOn).fromNow()}</div>
-            <div id={`testCase-${testCase._id}-execution`} className="card-text testCase-execution mx-2 text-danger">{testCase.execution}</div>
-          </div>
+            <div>
+              <div className="mx-2">Executed By {testCase.executedBy.fullName} &bull; {moment(testCase.executedOn).fromNow()}</div>
+              <div id={`testCase-${testCase._id}-execution`} className="card-text testCase-execution mx-2 text-danger">{testCase.execution}</div>
+            </div>
           )}
         </div>
       </div>
