@@ -64,13 +64,15 @@ function BugList({ auth, showError, showSuccess }) {
         </div>
       )}
       {error && <div className="text-danger text-center">{error}</div>}
-      {!pending && !error && _.isEmpty(items) && (<div>No Bugs Found</div>)}
-      {_.map(items, item => (
-        <BugListItem 
-          key={item._id}
-          item={item}
-        />
-      ))}
+      {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center">No Bugs Found</div>)}
+      <div className="BugList bg-white rounded p-2">
+        {_.map(items, item => (
+          <BugListItem 
+            key={item._id}
+            item={item}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import moment from 'moment';
 
 function BugListItem({ item }) {
   return (
-    <div className="card text-dark mt-3">
+    <div className="BugListItem card text-dark">
       <div className="card-body align-items-center">
         <div className="card-title fs-4">
           <Link to={`/bug/${item._id}`} className="text-black">{item.title}</Link>

@@ -5,7 +5,7 @@ import CommentItem from './CommentItem';
 import TestCaseItem from './TestCaseItem';
 import InputField from './InputField';
 import axios from 'axios';
-import SelectField from './SelectField';
+import avatar from './img/avatar.png';
 
 function BugEditor({ auth, showError, showSuccess }) {
   const { bugId } = useParams();
@@ -500,26 +500,32 @@ function BugEditor({ auth, showError, showSuccess }) {
           {error && <div className="mt-1 text-danger">{error}</div>}
           {success && <div className="mt-1 text-success">{success}</div>}
 
-          <div className="BugEditor-CommentList">
-            <h2>Comments</h2>
-            <div>
+          <h2>Comments</h2>
+          <div className="BugEditor-CommentList bg-white p-2 rounded">
+            <div className="AddComment">
+              {/* <InputField
+                label=""
+                id="AddComment"
+                type="text"
+                value={newComment}
+                onChange={(evt) => onInputChange(evt, setNewComment)}
+                placeholder="Comment..."
+              /> */}
+              <div className="d-flex">
+                <img src={avatar} alt="PFP" className="avatar"/>
+                <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
+              </div>
+              <button className="btn btn-outline-success my-3" type="submit" onClick={(evt) => onClickPostComment(evt)}>
+                Post
+              </button>
+            </div>
+            <div className="CommentList">
               {!_.isEmpty(comments) ? (_.map(comments, (comment) => (
                 <CommentItem key={comment._id} comment={comment} />
               ))) : <div>Be the First to Post a Comment for {bug?.title}!</div>}
             </div>
           </div>
-          <div className="BugEditor-AddComment">
-            <InputField
-              label=""
-              id="AddComment"
-              type="text"
-              value={newComment}
-              onChange={(evt) => onInputChange(evt, setNewComment)}
-              placeholder="Comment..."
-            />
-            <button className="btn btn-success" type="submit" onClick={(evt) => onClickPostComment(evt)}>
-              Post
-            </button>
+          <div>
             {commentError && <div className="text-danger">{commentError}</div>}
             {commentSuccess && <div className="text-success">{commentSuccess}</div>}
           </div>

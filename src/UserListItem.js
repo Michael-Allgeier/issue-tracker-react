@@ -7,7 +7,7 @@ function UserListItem({ item }) {
   const roles = item.role;
 
   return (
-    <div className="card text-dark mt-3">
+    <div className="UserListItem card text-dark">
       <div className="card-body align-items-center">
         <div className="card-title fs-4">
           <Link to={`/user/${item._id}`} className="text-black">{item.fullName}</Link>

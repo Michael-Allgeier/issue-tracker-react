@@ -61,11 +61,11 @@ function App() {
   }
 
   function showError(message) {
-    toast(message, {type: 'error', position: 'top-right'});
+    toast(message, {type: 'error', position: 'bottom-right'});
   }
 
   function showSuccess(message) {
-    toast(message, {type: 'success', position: 'top-right'});
+    toast(message, {type: 'success', position: 'bottom-right'});
   }
 
   // function onClickBugList(evt) {

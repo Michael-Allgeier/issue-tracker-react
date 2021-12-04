@@ -64,12 +64,14 @@ function UserList({ auth, showError, showSuccess }) {
       )}
       {error && <div className="text-danger text-center">{error}</div>}
       {!pending && !error && _.isEmpty(items) && (<div>No Users Found</div>)}
-      {_.map(items, item => (
-        <UserListItem 
-          key={item._id}
-          item={item}
-        />
-      ))}
+      <div className="UserList bg-white rounded p-2">
+        {_.map(items, item => (
+          <UserListItem 
+            key={item._id}
+            item={item}
+          />
+        ))}
+      </div>
     </div>
   );
 }
