@@ -12,11 +12,11 @@ function UserListItem({ item }) {
         <div className="card-title fs-4">
           <Link to={`/user/${item._id}`} className="text-black">{item.fullName}</Link>
         </div>
-        <div className="card-text">
-          <span className="me-2 badge bg-primary">{item.email}</span>
-          {!item.role && (<span className="me-2 badge bg-danger">No Role</span>) }
+        <div>
+          <div className="me-2 badge bg-primary card-text fs-6">{item.email}</div>
+          {(!item.role || (_.isArray(roles) && _.isEmpty(roles))) && (<div className="me-2 badge bg-danger card-text fs-6">No Role</div>) }
           {_.map(roles, role => (
-            <span key={role} value={role} className="me-2 badge bg-primary">{role}</span>
+            <div key={role} value={role} className="me-2 badge bg-secondary card-text fs-6">{role}</div>
           ))}
         </div>
       </div>

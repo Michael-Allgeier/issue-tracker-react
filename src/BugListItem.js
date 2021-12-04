@@ -10,22 +10,22 @@ function BugListItem({ item }) {
         </div>
         <div className="card-text">
           {item.assignedTo ? (
-            <span className="me-2 badge bg-success">{item.assignedTo.fullName}</span>
+            <span className="me-2 badge bg-success fs-6">{item.assignedTo.fullName}</span>
           ) : item.assignedToUserName ? (
-            <span className="me-2 badge bg-success">{item.assignedToUserName}</span>
+            <span className="me-2 badge bg-success fs-6">{item.assignedToUserName}</span>
           ) : (
-            <span className="me-2 badge bg-danger">No User Assigned</span>
+            <span className="me-2 badge bg-danger fs-6">No User Assigned</span>
           )}
-          {item.classification === 'Approved' && <span className="me-2 badge bg-success">{item.classification}</span>}
-          {item.classification === 'Unapproved' && <span className="me-2 badge bg-danger">{item.classification}</span>}
-          {item.classification === 'Duplicate' && <span className="me-2 badge bg-danger">{item.classification}</span>}
+          {item.classification === 'Approved' && <span className="me-2 badge bg-success fs-6">{item.classification}</span>}
+          {item.classification === 'Unapproved' && <span className="me-2 badge bg-danger fs-6">{item.classification}</span>}
+          {item.classification === 'Duplicate' && <span className="me-2 badge bg-danger fs-6">{item.classification}</span>}
           {item.classification === 'Unclassified' && (
-            <span className="me-2 badge bg-warning">{item.classification}</span>
+            <span className="me-2 badge bg-warning fs-6">{item.classification}</span>
           )}
           {item.closed === true ? (
-            <span className="me-2 badge bg-danger">Closed</span>
+            <span className="me-2 badge bg-danger fs-6">Closed</span>
           ) : (
-            <span className="me-2 badge bg-success">Open</span>
+            <span className="me-2 badge bg-success fs-6">Open</span>
           )}
         </div>
       </div>
