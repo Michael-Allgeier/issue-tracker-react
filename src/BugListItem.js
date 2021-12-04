@@ -10,22 +10,22 @@ function BugListItem({ item }) {
         </div>
         <div className="card-text">
           {item.assignedTo ? (
-            <span className="me-2 badge bg-success fs-6">{item.assignedTo.fullName}</span>
+            <span className="me-2 badge bg-success fs-6 mt-2">{item.assignedTo.fullName}</span>
           ) : item.assignedToUserName ? (
-            <span className="me-2 badge bg-success fs-6">{item.assignedToUserName}</span>
+            <span className="me-2 badge bg-success fs-6 mt-2">{item.assignedToUserName}</span>
           ) : (
-            <span className="me-2 badge bg-danger fs-6">No User Assigned</span>
+            <span className="me-2 badge bg-danger fs-6 mt-2">No User Assigned</span>
           )}
-          {item.classification === 'Approved' && <span className="me-2 badge bg-success fs-6">{item.classification}</span>}
-          {item.classification === 'Unapproved' && <span className="me-2 badge bg-danger fs-6">{item.classification}</span>}
-          {item.classification === 'Duplicate' && <span className="me-2 badge bg-danger fs-6">{item.classification}</span>}
+          {item.classification === 'Approved' && <span className="me-2 badge bg-success fs-6 mt-2">{item.classification}</span>}
+          {item.classification === 'Unapproved' && <span className="me-2 badge bg-danger fs-6 mt-2">{item.classification}</span>}
+          {item.classification === 'Duplicate' && <span className="me-2 badge bg-danger fs-6 mt-2">{item.classification}</span>}
           {item.classification === 'Unclassified' && (
-            <span className="me-2 badge bg-warning fs-6">{item.classification}</span>
+            <span className="me-2 badge bg-warning fs-6 mt-2">{item.classification}</span>
           )}
           {item.closed === true ? (
-            <span className="me-2 badge bg-danger fs-6">Closed</span>
+            <span className="me-2 badge bg-danger fs-6 mt-2">Closed</span>
           ) : (
-            <span className="me-2 badge bg-success fs-6">Open</span>
+            <span className="me-2 badge bg-success fs-6 mt-2">Open</span>
           )}
         </div>
       </div>

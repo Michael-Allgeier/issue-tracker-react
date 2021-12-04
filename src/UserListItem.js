@@ -13,10 +13,10 @@ function UserListItem({ item }) {
           <Link to={`/user/${item._id}`} className="text-black">{item.fullName}</Link>
         </div>
         <div>
-          <div className="me-2 badge bg-primary card-text fs-6">{item.email}</div>
+          <div className="me-2 badge bg-primary card-text fs-6 mt-3">{item.email}</div>
           {(!item.role || (_.isArray(roles) && _.isEmpty(roles))) && (<div className="me-2 badge bg-danger card-text fs-6">No Role</div>) }
           {_.map(roles, role => (
-            <div key={role} value={role} className="me-2 badge bg-secondary card-text fs-6">{role}</div>
+            <div key={role} value={role} className="me-2 badge bg-secondary card-text fs-6 mt-3">{role}</div>
           ))}
         </div>
       </div>
