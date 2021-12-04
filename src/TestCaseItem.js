@@ -4,7 +4,7 @@ function TestCaseItem({ testCase }) {
   return (
     <div id={`testCase-${testCase._id}`} className="TestCaseItem card my-2">
       <div>
-        <div id={`testCase-${testCase._id}-testCaseText`} className="card-text fs-5 testCase-text px-2"><a href="#testCase">{testCase.testCase}</a></div>
+        <div id={`testCase-${testCase._id}-testCaseText`} className="card-text fs-5 testCase-text px-2"><a href="#testCase" className="text-black">{testCase.testCase}</a></div>
         <div className="mx-2 text-muted">
           Created By {testCase.createdBy.fullName} &bull; {moment(testCase.createdOn).fromNow()}
         </div>
