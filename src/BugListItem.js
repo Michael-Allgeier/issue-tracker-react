@@ -22,18 +22,22 @@ function BugListItem({ item }) {
           {item.classification === 'Unclassified' && (
             <span className="me-2 badge bg-warning fs-6 mt-2">{item.classification}</span>
           )}
-          {item.closed === true ? (
-            <span className="me-2 badge bg-danger fs-6 mt-2">Closed</span>
-          ) : (
-            <span className="me-2 badge bg-success fs-6 mt-2">Open</span>
-          )}
         </div>
       </div>
-      <div className="card-footer text-center">
+      <div className="card-footer text-center d-flex justify-content-between">
+        <span>
           {item.createdOn && <span className="">{moment(item.createdOn).fromNow()}</span>}
           {item.dateCreated && <span className="">{moment(item.dateCreated).fromNow()}</span>}
           {item?.createdBy?.fullName ? <span> by {item.createdBy.fullName}</span> : <span> by {item?.createdBy?.email}</span>}
-        </div>
+        </span>
+        <span>
+          {item.closed === true ? (
+            <span className="me-2 badge bg-danger">Closed</span>
+            ) : (
+            <span className="me-2 badge bg-success">Open</span>
+          )}
+        </span>
+      </div>
     </div>
   );
 }
