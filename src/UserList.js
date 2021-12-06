@@ -56,15 +56,15 @@ function UserList({ auth, showError, showSuccess }) {
 
   return (
     <div>
-      <h1 className="text-center">User List</h1>
+      <h1 className="text-center visually-hidden">User List</h1>
       {pending && (
         <div className="spinner-border text-light" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
-      {error && <div className="text-danger text-center">{error}</div>}
-      {!pending && !error && _.isEmpty(items) && (<div>No Users Found</div>)}
-      <div className="UserList bg-white rounded p-2">
+      <div className="UserList rounded">
+        {error && <div className="text-danger text-center fs-4">{error}</div>}
+        {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center fs-4">No Users Found</div>)}
         {_.map(items, item => (
           <UserListItem 
             key={item._id}

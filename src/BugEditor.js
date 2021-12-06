@@ -312,40 +312,44 @@ function BugEditor({ auth, showError, showSuccess }) {
 
     if (!newComment) {
       setCommentError('Comment can not be empty!');
-    }
-
-    axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/comment/new`, {
-      method: 'put',
-      headers: {
-        authorization: `Bearer ${auth?.token}`,
-      },
-      data: { comment: newComment },
-    })
-      .then((res) => {
-        setPending(false);
-        res.data.comment = newComment;
-        setCommentError('');
-        setCommentSuccess('Comment Posted');
-        showSuccess('Comment Posted');
+      showError('Comment can not be empty!');
+      setPending(false);
+    } else {
+      axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/comment/new`, {
+        method: 'put',
+        headers: {
+          authorization: `Bearer ${auth?.token}`,
+        },
+        data: { comment: newComment },
       })
-      .catch((err) => {
-        setPending(false);
-        setCommentSuccess('');
-        const resError = err?.response?.data?.error;
-        if (resError) {
-          if (typeof resError === 'string') {
-            setCommentError(resError);
-            showError(resError);
-          } else if (resError.details) {
-            setCommentError(_.map(resError.details, (x) => <div>{x.message}</div>));
+        .then((res) => {
+          setPending(false);
+          res.data.comment = newComment;
+          setCommentError('');
+          setCommentSuccess('Comment Posted');
+          showSuccess('Comment Posted');
+          setComments([...comments, {comment: newComment, author: auth}]);
+          document.getElementById('AddComment').value = '';
+        })
+        .catch((err) => {
+          setPending(false);
+          setCommentSuccess('');
+          const resError = err?.response?.data?.error;
+          if (resError) {
+            if (typeof resError === 'string') {
+              setCommentError(resError);
+              showError(resError);
+            } else if (resError.details) {
+              setCommentError(_.map(resError.details, (x) => <div>{x.message}</div>));
+            } else {
+              setCommentError(JSON.stringify(resError));
+            }
           } else {
-            setCommentError(JSON.stringify(resError));
+            setCommentError(err.message);
+            showError(resError);
           }
-        } else {
-          setCommentError(err.message);
-          showError(resError);
-        }
-      });
+        });
+    }
   }
 
   function onClickAddTestCase(evt) {
@@ -433,7 +437,7 @@ function BugEditor({ auth, showError, showSuccess }) {
               onChange={(evt) => onInputChange(evt, setStepsToReproduce)}
               error={stepsToReproduceError}
             />
-            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+            <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
               Submit Edit
             </button>
           </form>
@@ -452,7 +456,7 @@ function BugEditor({ auth, showError, showSuccess }) {
                 <option value="Unapproved">Unapproved</option>
                 <option value="Duplicate">Duplicate</option>
               </select>
-              <button className="btn btn-success" type="submit" onClick={(evt) => onClickSubmitClassification(evt)}>
+              <button className="btn btn-primary" type="submit" onClick={(evt) => onClickSubmitClassification(evt)}>
                 Classify
               </button>
             </div>
@@ -473,7 +477,7 @@ function BugEditor({ auth, showError, showSuccess }) {
                   </option>
                 ))}
               </select>
-              <button className="btn btn-success" type="submit" onClick={(evt) => onClickSubmitAssignment(evt)}>
+              <button className="btn btn-primary" type="submit" onClick={(evt) => onClickSubmitAssignment(evt)}>
                 Assign Bug
               </button>
             </div>
@@ -492,7 +496,7 @@ function BugEditor({ auth, showError, showSuccess }) {
                 <option value={true}>Close</option>
                 <option value={false}>Open</option>
               </select>
-              <button className="btn btn-success" type="submit" onClick={(evt) => onClickCloseBug(evt)}>
+              <button className="btn btn-primary" type="submit" onClick={(evt) => onClickCloseBug(evt)}>
                 Update
               </button>
             </div>
@@ -501,58 +505,56 @@ function BugEditor({ auth, showError, showSuccess }) {
           {success && <div className="mt-1 text-success">{success}</div>}
 
           <h2>Comments</h2>
-          <div className="BugEditor-CommentList bg-white p-2 rounded">
-            <div className="AddComment">
-              {/* <InputField
-                label=""
-                id="AddComment"
-                type="text"
-                value={newComment}
-                onChange={(evt) => onInputChange(evt, setNewComment)}
-                placeholder="Comment..."
-              /> */}
+          <div className="BugEditor-CommentList bg-dark bg-gradient rounded">
+            <div className="AddComment p-2">
               <div className="d-flex">
                 <img src={avatar} alt="PFP" className="avatar"/>
                 <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
               </div>
-              <button className="btn btn-outline-success my-3" type="submit" onClick={(evt) => onClickPostComment(evt)}>
+              <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickPostComment(evt)}>
                 Post
               </button>
+              <div>
+                {commentError && <div className="text-danger">{commentError}</div>}
+                {commentSuccess && <div className="text-success">{commentSuccess}</div>}
+              </div>
             </div>
             <div className="CommentList">
               {!_.isEmpty(comments) ? (_.map(comments, (comment) => (
-                <CommentItem key={comment._id} comment={comment} />
-              ))) : <div>Be the First to Post a Comment for {bug?.title}!</div>}
+                <CommentItem key={comment._id} comment={comment} auth={auth}/>
+              ))) : <div className="text-light text-center fs-4 mt-4">Be the First to Post a Comment For {bug?.title}!</div>}
+            </div>
+          </div>
+
+          <h2 className="mt-3">Test Cases</h2>
+          <div className="BugEditor-TestCaseList bg-dark bg-gradient rounded">
+            <div className="AddTestCase p-2">
+              <InputField 
+                label=""
+                id="AddTestCaseTitle"
+                type="text"
+                value={newTestCase}
+                onChange={(evt) => onInputChange(evt, setNewTestCase)}
+                placeholder="Test Case Title..."
+              />
+              <textarea className="form-control" id="AddTestCase" type="text" value="" placeholder="Test Case..."/>
+              <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
+                Add Test Case
+              </button>
+            </div>
+          
+            <div className="TestCaseList">
+              <div>
+                  {!_.isEmpty(testCases) ? (_.map(testCases, (testCase) => (
+                    <TestCaseItem 
+                      key={testCase._id}
+                      testCase={testCase}
+                    />
+                  ))) : <div className="text-light fs-4 text-center mt-4">Be The First To Add A Test Case For {bug?.title}!</div>}
+              </div>
             </div>
           </div>
           <div>
-            {commentError && <div className="text-danger">{commentError}</div>}
-            {commentSuccess && <div className="text-success">{commentSuccess}</div>}
-          </div>
-
-          <div className="BugEditor-TestCaseList mt-3">
-            <h2>Test Cases</h2>
-            <div>
-                {!_.isEmpty(testCases) ? (_.map(testCases, (testCase) => (
-                  <TestCaseItem 
-                    key={testCase._id}
-                    testCase={testCase}
-                  />
-                ))) : <div>There Are No Test Cases for {bug?.title}!</div>}
-            </div>
-          </div>
-          <div className="BugEditor-AddTestCase mt-3">
-            <InputField 
-              label="Add New Test Case"
-              id="AddTestCase"
-              type="text"
-              value={newTestCase}
-              onChange={(evt) => onInputChange(evt, setNewTestCase)}
-              placeholder="Test Case Title..."
-            />
-            <button className="btn btn-success" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
-              Add
-            </button>
             {testCaseError && <div className="text-danger">{testCaseError}</div>}
             {testCaseSuccess && <div className="text-success">{testCaseSuccess}</div>}
           </div>

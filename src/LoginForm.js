@@ -99,7 +99,7 @@ function LoginForm({ onLogin, showError }) {
           error={passwordError}
         />
         <div className="d-flex justify-content-between mt-3">
-          <button type="submit" className="LoginForm-Submit btn btn-success btn-lg" onClick={(evt) => onClickLogin(evt)}>Login</button>
+          <button type="submit" className="LoginForm-Submit btn btn-primary btn-lg" onClick={(evt) => onClickLogin(evt)}>Login</button>
           <div>
             <div>Don't Have an Account?</div>
             <Link to="/register" className="text-black">Click Here to Register</Link>

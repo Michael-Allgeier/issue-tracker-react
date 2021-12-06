@@ -303,7 +303,7 @@ function UserEditor({ auth, showError, showSuccess }) {
                 PM
               </label>
             </div>
-            <button className="btn btn-success mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+            <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
               Submit Edit
             </button>
           </form>

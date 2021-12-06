@@ -57,15 +57,15 @@ function BugList({ auth, showError, showSuccess }) {
 
   return (
     <div>
-      <h1 className="text-center">Bug List</h1>
+      <h1 className="text-center visually-hidden">Bug List</h1>
       {pending && (
         <div className="spinner-border text-light" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
-      {error && <div className="text-danger text-center">{error}</div>}
-      {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center">No Bugs Found</div>)}
-      <div className="BugList bg-white rounded p-2">
+      <div className="BugList rounded">
+        {error && <div className="text-danger text-center fs-4">{error}</div>}
+        {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center fs-4">No Bugs Found</div>)}
         {_.map(items, item => (
           <BugListItem 
             key={item._id}
