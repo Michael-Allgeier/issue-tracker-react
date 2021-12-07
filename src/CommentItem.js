@@ -9,13 +9,13 @@ function CommentItem({ comment, auth }) {
           <img src={avatar} alt="PFP" className="avatar" />
           <div className="text-muted ms-3">
             {/* {comment.author.fullName ? comment.author.fullName : comment.author} &bull; {moment(comment.dateCreated).fromNow()} */}
-            {comment?.author?.fullName ? comment?.author?.fullName : (auth && auth?.fullName)} &bull; {moment(comment.dateCreated).fromNow()}
+            {comment?.author?.fullName ? comment?.author?.fullName : (auth && auth?.fullName)} <span className="me-1"></span>&bull;<span className="ms-1"></span> {moment(comment.dateCreated).fromNow()}
             {/* <div id={`comment-${comment.id}-author`} className="card-text comment-author text-secondary">By {comment.author} On {comment.dateCreated}</div> */}
             {/* <div className="test-case-dot-icon"><i class="fas fa-circle fa-xs text-secondary"/></div> */}
             {/* <div id={`comment-${comment.id}-date-created`} className="card-text comment-date-created text-secondary"> On {comment.dateCreated}</div> */}
           </div>
         </div>
-        <div id={`comment-${comment._id}-title`} className="card-text comment-text text-light"><p className="me-3 mt-1">{comment.comment}</p></div>
+        <div id={`comment-${comment._id}-title`} className="card-text comment-text text-light"><p className="m-3 mt-1">{comment.comment}</p></div>
       </div>
     </div>
   );

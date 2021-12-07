@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import {FaListAlt, FaDoorOpen, FaDoorClosed} from 'react-icons/fa';
 
 function Navbar({ auth, onLogout }) {
   function onClickLogout(evt) {
@@ -18,22 +19,34 @@ function Navbar({ auth, onLogout }) {
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               {!auth && (
               <li className="nav-item">
-                <NavLink to="/login" className="nav-link">Login</NavLink>
+                <NavLink to="/login" className="nav-link">
+                  <FaDoorOpen className="me-1 mb-1"/>
+                  Login
+                  </NavLink>
               </li>
               )}
               {auth && (
               <li className="nav-item">
-                <NavLink to="/login" className="nav-link" onClick={(evt) => onClickLogout(evt)}>Logout</NavLink>
+                <NavLink to="/login" className="nav-link" onClick={(evt) => onClickLogout(evt)}>
+                  <FaDoorClosed className="me-1 mb-1"/>
+                  Logout
+                </NavLink>
               </li>
               )}
               <li className="nav-item">
-                <NavLink to="/bug/list" className="nav-link">Bug List</NavLink>
+                <NavLink to="/bug/list" className="nav-link">
+                  <FaListAlt className="me-1 mb-1"/>
+                  Bug List
+                </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink to="/user/list" className="nav-link">User List</NavLink>
+                <NavLink to="/user/list" className="nav-link">
+                  <FaListAlt className="me-1 mb-1"/>
+                  User List
+                </NavLink>
               </li>
             </ul>
-            { auth && ( <span className="navbar-text">{auth.email}</span>)}
+            { auth && ( <span className="navbar-text me-2">{auth.email}</span>)}
           </div>
         </div>
       </nav>

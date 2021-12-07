@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import {FaEdit, FaCommentAlt} from 'react-icons/fa';
 import CommentItem from './CommentItem';
 import TestCaseItem from './TestCaseItem';
 import InputField from './InputField';
@@ -23,11 +24,13 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [pending, setPending] = useState(true);
   const [users, setUsers] = useState(null);
   const [comments, setComments] = useState(null);
+  const [numComments, setNumComments] = useState(null);
   const [newComment, setNewComment] = useState('');
   const [commentError, setCommentError] = useState('');
   const [commentSuccess, setCommentSuccess] = useState('');
   const [testCases, setTestCases] = useState(null);
   const [newTestCase, setNewTestCase] = useState('');
+  const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
   const [testCaseError, setTestCaseError] = useState('');
   const [testCaseSuccess, setTestCaseSuccess] = useState('');
 
@@ -123,7 +126,7 @@ function BugEditor({ auth, showError, showSuccess }) {
         setError(err.message);
         showError(err.message);
       });
-  }, [bugId, auth, showError]);
+  }, [bugId, auth, showError, comments]);
 
   useEffect(() => {
     if (!auth) {
@@ -282,13 +285,8 @@ function BugEditor({ auth, showError, showSuccess }) {
         setPending(false);
         res.data.closed = closed;
         setError('');
-        if (!closed) {
-          setSuccess('Bug Opened!');
-          showSuccess('Bug Opened!');
-        } else {
-          setSuccess('Bug Closed!');
-          showSuccess('Bug Closed!');
-        }
+        console.log(closed);
+        showSuccess('Bug Updated!');
       })
       .catch((err) => {
         setPending(false);
@@ -363,8 +361,8 @@ function BugEditor({ auth, showError, showSuccess }) {
     setCommentSuccess('');
     setPending(true);
 
-    if (!newTestCase) {
-      setCommentError('Comment can not be empty!');
+    if (!newTestCase || !newTestCaseTitle) {
+      setTestCaseError('Inputs can not be empty!');
     }
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/new`, {
@@ -372,12 +370,12 @@ function BugEditor({ auth, showError, showSuccess }) {
       headers: {
         authorization: `Bearer ${auth?.token}`,
       },
-      data: { testCase: newTestCase },
+      data: { testCase: newTestCase, testCaseTitle: newTestCaseTitle },
     })
       .then((res) => {
         setPending(false);
-        res.data.testCase = newTestCase;
         setTestCaseError('');
+        setTestCases([...testCases, {testCase: newTestCase, testCaseTitle: newTestCaseTitle, createdBy: auth}])
         setTestCaseSuccess('Test Case Added');
         showSuccess('Test Case Added');
       })
@@ -443,6 +441,7 @@ function BugEditor({ auth, showError, showSuccess }) {
               error={stepsToReproduceError}
             />
             <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+              <FaEdit className="me-2 mb-1"/>
               Submit Edit
             </button>
             {editError && <div className="mt-1 text-danger">{editError}</div>}
@@ -512,11 +511,13 @@ function BugEditor({ auth, showError, showSuccess }) {
           {success && <div className="mt-1 text-success">{success}</div>}
           <div className="BugEditor-CommentList bg-dark bg-gradient rounded">
             <div className="AddComment p-3">
+              <div>Number of Comments</div>
               <div className="d-flex">
                 <img src={avatar} alt="PFP" className="avatar"/>
                 <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
               </div>
               <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickPostComment(evt)}>
+                <FaCommentAlt className="me-2" />
                 Post
               </button>
               <div>
@@ -533,9 +534,9 @@ function BugEditor({ auth, showError, showSuccess }) {
           <div className="BugEditor-TestCaseList bg-dark bg-gradient rounded mt-3">
             <div className="AddTestCase p-3">
               <label htmlFor="AddTestCaseTitle" className="form-label visually-hidden"></label>
-              <input type="text" className="form-control" id="AddTestCaseTitle" value={newTestCase} placeholder="Test Case Title..." onChange={(evt) => onInputChange(evt, setNewTestCase)}/>
+              <input type="text" className="form-control" id="AddTestCaseTitle" value={newTestCaseTitle} placeholder="Test Case Title..." onChange={(evt) => onInputChange(evt, setNewTestCaseTitle)}/>
               <label htmlFor="AddTestCase" classification="form-label visually-hidden"></label>
-              <textarea className="form-control" id="AddTestCase" type="text" value="" placeholder="Test Case..."/>
+              <textarea className="form-control" id="AddTestCase" type="text" value={newTestCase} placeholder="Test Case..." onChange={(evt) => onInputChange(evt, setNewTestCase)}/>
               <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
                 Add Test Case
               </button>
@@ -547,6 +548,7 @@ function BugEditor({ auth, showError, showSuccess }) {
                     <TestCaseItem 
                       key={testCase._id}
                       testCase={testCase}
+                      bugId={bugId}
                     />
                   ))) : <div className="text-light fs-4 text-center mt-4">Be The First To Add A Test Case For {bug?.title}!</div>}
               </div>

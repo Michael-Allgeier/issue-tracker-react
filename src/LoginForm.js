@@ -3,6 +3,7 @@ import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
+import {FaDoorOpen} from 'react-icons/fa';
 import InputField from './InputField';
 
 
@@ -33,6 +34,7 @@ function LoginForm({ onLogin, showError }) {
     if (emailError || passwordError) {
       setError('Please fix errors');
       showError('Please fix errors');
+      setPending(false);
       return;
     }
 
@@ -99,7 +101,10 @@ function LoginForm({ onLogin, showError }) {
           error={passwordError}
         />
         <div className="d-flex justify-content-between mt-3">
-          <button type="submit" className="LoginForm-Submit btn btn-primary btn-lg" onClick={(evt) => onClickLogin(evt)}>Login</button>
+          <button type="submit" className="LoginForm-Submit btn btn-primary btn-lg" onClick={(evt) => onClickLogin(evt)}>
+            <FaDoorOpen className="me-2 mb-1"/>
+            Login
+            </button>
           <div>
             <div>Don't Have an Account?</div>
             <Link to="/register" className="text-black">Click Here to Register</Link>

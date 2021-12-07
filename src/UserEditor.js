@@ -1,6 +1,8 @@
+/* eslint-disable no-restricted-globals */
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import {FaUserEdit, FaTrashAlt} from 'react-icons/fa';
 import InputField from './InputField';
 import axios from 'axios';
 
@@ -17,7 +19,7 @@ function UserEditor({ auth, showError, showSuccess }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [pending, setPending] = useState(true);
-  console.log(auth.role);
+  const [authRole, setAuthRole] = useState(null);
 
   const givenNameError = !givenName ? 'Given Name (First Name) is required' : '';
   const familyNameError = !familyName ? 'Family Name (Last Name) is required' : '';
@@ -51,6 +53,8 @@ function UserEditor({ auth, showError, showSuccess }) {
         setFullName(res.data.fullName);
         setEmail(res.data.email);
         setRole(res.data.role);
+        setAuthRole(auth.role);
+        console.log(authRole);
         showSuccess('User Loaded!');
       })
       .catch((err) => {
@@ -58,7 +62,7 @@ function UserEditor({ auth, showError, showSuccess }) {
         setError(err.message);
         showError(err.message);
       });
-  }, [userId, auth, showError, showSuccess]);
+  }, [userId, auth, showError, showSuccess, authRole]);
 
   function onClickSubmitEdit(evt) {
     evt.preventDefault();
@@ -100,6 +104,44 @@ function UserEditor({ auth, showError, showSuccess }) {
           showError(err.message);
         }
       });
+  }
+
+  function onClickDeleteUser(evt) {
+    evt.preventDefault();
+    if (confirm('Are you sure you want to remove this user?')) {
+
+      axios(`${process.env.REACT_APP_API_URL}/api/user/${userId}`, {
+        method: 'delete',
+        headers: {
+          authorization: `Bearer ${auth?.token}`,
+        },
+      })
+      .then((res) => {
+        setPending(false);
+        setError('');
+        showSuccess(`${user?.fullName} Deleted!`);
+      })
+      .catch((err) => {
+        setPending(false);
+        const resError = err?.response?.data?.error;
+        if (resError) {
+          console.error(resError);
+          if (typeof resError === 'string') {
+            setError(resError);
+            showError(resError);
+          } else if (resError.details) {
+            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+          } else {
+            setError(JSON.stringify(resError));
+          }
+        } else {
+          console.error(err);
+          setError(err.message);
+          showError(err.message);
+        }
+      })
+    } else {
+    }
   }
 
   function onInputChange(evt, setValue) {
@@ -185,11 +227,18 @@ function UserEditor({ auth, showError, showSuccess }) {
               onChange={(evt) => onInputChange(evt, setConfirmPassword)}
               error={confirmPasswordError}
             />
-            <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
-              Submit Edit
-            </button>
+            <div className="d-flex justify-content-between">
+              <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+                <FaUserEdit className="me-2 mb-1"/>
+                Submit Edit
+              </button>
+              <button className="btn btn-danger mt-1" type="submit" onClick={(evt) => onClickDeleteUser(evt)}>
+                <FaTrashAlt className="me-2 mb-1"/>
+                Delete User
+              </button>
+            </div>
           </form>
-          {_.includes(role, 'TM', 'Admin') && (
+          {(_.includes(authRole, 'Admin') || _.includes(authRole, 'TM')) && (
             <div>
               <form id="editRoleForm">
                 <div>

@@ -6,6 +6,7 @@ import BugEditor from './BugEditor';
 import UserList from './UserList';
 //import UserListItem from './UserListItem';
 import UserEditor from './UserEditor';
+import TestCaseEditor from './TestCaseEditor';
 import Navbar from './Navbar';
 import NotFound  from './NotFound';
 import Footer from './Footer';
@@ -95,6 +96,7 @@ function App() {
           <Route path="/bug/:bugId" element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/list" element={<UserList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/:userId" element={<UserEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
+          <Route path="/bug/:bugId/test/:testId" element={<TestCaseEditor auth={auth} showError={showError} showSuccess={showSuccess}/>} />
           <Route path="*" element={<NotFound/> } />
         </Routes>
       </main>
