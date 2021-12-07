@@ -9,17 +9,17 @@ function BugListItem({ item }) {
           <div className="card-title fs-4">{item.title}</div>
           <div className="card-text">
             {item.assignedTo ? (
-              <span className="me-2 badge bg-success fs-6 mt-2 border border-light">{item.assignedTo.fullName}</span>
+              <span className="me-2 badge bg-success fs-6 mt-2 border border-light text-dark">{item.assignedTo.fullName}</span>
             ) : item.assignedToUserName ? (
-              <span className="me-2 badge bg-success fs-6 mt-2 border border-light">{item.assignedToUserName}</span>
+              <span className="me-2 badge bg-success fs-6 mt-2 border border-light text-dark">{item.assignedToUserName}</span>
             ) : (
-              <span className="me-2 badge bg-danger fs-6 mt-2 border border-light">No User Assigned</span>
+              <span className="me-2 badge bg-danger fs-6 mt-2 border border-light text-dark">No User Assigned</span>
             )}
-            {item.classification === 'Approved' && <span className="me-2 badge bg-success fs-6 mt-2 border border-light">{item.classification}</span>}
-            {item.classification === 'Unapproved' && <span className="me-2 badge bg-danger fs-6 mt-2 border border-light">{item.classification}</span>}
-            {item.classification === 'Duplicate' && <span className="me-2 badge bg-danger fs-6 mt-2 border border-light">{item.classification}</span>}
+            {item.classification === 'Approved' && <span className="me-2 badge bg-success fs-6 mt-2 border border-light text-dark">{item.classification}</span>}
+            {item.classification === 'Unapproved' && <span className="me-2 badge bg-danger fs-6 mt-2 border border-light text-dark">{item.classification}</span>}
+            {item.classification === 'Duplicate' && <span className="me-2 badge bg-danger fs-6 mt-2 border border-light text-dark">{item.classification}</span>}
             {item.classification === 'Unclassified' && (
-              <span className="me-2 badge bg-warning fs-6 mt-2 border border-light">{item.classification}</span>
+              <span className="me-2 badge bg-warning fs-6 mt-2 border border-light text-dark">{item.classification}</span>
             )}
           </div>
         </div>
@@ -29,11 +29,11 @@ function BugListItem({ item }) {
             {item.dateCreated && <span className="">Created {moment(item.dateCreated).fromNow()}</span>}
             {item?.createdBy?.fullName ? <span> By {item.createdBy.fullName}</span> : <span> by {item?.createdBy?.email}</span>}
           </span>
-          <span>
+          <span className="align-items-center">
             {item.closed === true ? (
-              <span className="me-2 badge bg-danger border border-light">Closed</span>
+              <div className="me-2 badge bg-danger border border-light text-dark fs-6 align-items-center">Closed</div>
               ) : (
-              <span className="me-2 badge bg-success border border-light">Open</span>
+              <div className="me-2 badge bg-success border border-light text-dark fs-6 justify-content-center">Open</div>
             )}
           </span>
         </div>

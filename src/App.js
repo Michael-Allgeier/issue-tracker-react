@@ -35,7 +35,9 @@ function App() {
             token: storedAuthToken,
             payload: authPayload,
             email: authPayload.email,
-            userId: authPayload._id
+            userId: authPayload._id,
+            fullName: authPayload.fullName,
+            role: authPayload.role,
           };
           setAuth(auth);
         }

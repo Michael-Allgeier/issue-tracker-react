@@ -17,7 +17,9 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [assignedTo, setAssignedTo] = useState(null);
   const [closed, setClosed] = useState(null);
   const [error, setError] = useState('');
+  const [editError, setEditError] = useState('');
   const [success, setSuccess] = useState('');
+  const [editSuccess, setEditSuccess] = useState('');
   const [pending, setPending] = useState(true);
   const [users, setUsers] = useState(null);
   const [comments, setComments] = useState(null);
@@ -150,8 +152,11 @@ function BugEditor({ auth, showError, showSuccess }) {
   function onClickSubmitEdit(evt) {
     evt.preventDefault();
 
+    setEditSuccess('');
+    setEditError('');
+
     if (titleError || descriptionError || stepsToReproduceError) {
-      setError('Please fix errors');
+      setEditError('Please fix errors');
       showError('Please fix errors');
       return;
     }
@@ -168,8 +173,8 @@ function BugEditor({ auth, showError, showSuccess }) {
         // res.data.title = title;
         // res.data.description = description;
         // res.data.stepsToReproduce = stepsToReproduce;
-        setError('');
-        setSuccess('Bug Updated!');
+        setEditError('');
+        setEditSuccess('Bug Updated!');
         showSuccess('Bug Updated!');
       })
       .catch((err) => {
@@ -177,15 +182,15 @@ function BugEditor({ auth, showError, showSuccess }) {
         const resError = err?.response?.data?.error;
         if (resError) {
           if (typeof resError === 'string') {
-            setError(resError);
+            setEditError(resError);
             showError(resError);
           } else if (resError.details) {
-            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+            setEditError(_.map(resError.details, (x) => <div>{x.message}</div>));
           } else {
-            setError(JSON.stringify(resError));
+            setEditError(JSON.stringify(resError));
           }
         } else {
-          setError(err.message);
+          setEditError(err.message);
           showError(resError);
         }
       });
@@ -411,7 +416,7 @@ function BugEditor({ auth, showError, showSuccess }) {
       {!pending && bug && (
         <div className="BugEditor-Form p-3">
           <h1 className="BugEditor-Header m-3 text-center">{bug?.title}</h1>
-          <form>
+          <form className="border-bottom border-light pb-3">
             <h2>Edit Bug</h2>
             <InputField
               label="Title"
@@ -440,6 +445,8 @@ function BugEditor({ auth, showError, showSuccess }) {
             <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
               Submit Edit
             </button>
+            {editError && <div className="mt-1 text-danger">{editError}</div>}
+            {editSuccess && <div className="mt-1 text-success">{editSuccess}</div>}
           </form>
           <form className="mt-3">
             <div className="input-group mb-3">
@@ -503,10 +510,8 @@ function BugEditor({ auth, showError, showSuccess }) {
           </form>
           {error && <div className="mt-1 text-danger">{error}</div>}
           {success && <div className="mt-1 text-success">{success}</div>}
-
-          <h2>Comments</h2>
           <div className="BugEditor-CommentList bg-dark bg-gradient rounded">
-            <div className="AddComment p-2">
+            <div className="AddComment p-3">
               <div className="d-flex">
                 <img src={avatar} alt="PFP" className="avatar"/>
                 <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
@@ -525,18 +530,11 @@ function BugEditor({ auth, showError, showSuccess }) {
               ))) : <div className="text-light text-center fs-4 mt-4">Be the First to Post a Comment For {bug?.title}!</div>}
             </div>
           </div>
-
-          <h2 className="mt-3">Test Cases</h2>
-          <div className="BugEditor-TestCaseList bg-dark bg-gradient rounded">
-            <div className="AddTestCase p-2">
-              <InputField 
-                label=""
-                id="AddTestCaseTitle"
-                type="text"
-                value={newTestCase}
-                onChange={(evt) => onInputChange(evt, setNewTestCase)}
-                placeholder="Test Case Title..."
-              />
+          <div className="BugEditor-TestCaseList bg-dark bg-gradient rounded mt-3">
+            <div className="AddTestCase p-3">
+              <label htmlFor="AddTestCaseTitle" className="form-label visually-hidden"></label>
+              <input type="text" className="form-control" id="AddTestCaseTitle" value={newTestCase} placeholder="Test Case Title..." onChange={(evt) => onInputChange(evt, setNewTestCase)}/>
+              <label htmlFor="AddTestCase" classification="form-label visually-hidden"></label>
               <textarea className="form-control" id="AddTestCase" type="text" value="" placeholder="Test Case..."/>
               <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
                 Add Test Case
