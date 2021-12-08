@@ -62,9 +62,9 @@ function UserList({ auth, showError, showSuccess }) {
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
-      <div className="UserList rounded">
-        {error && <div className="text-danger text-center fs-4">{error}</div>}
-        {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center fs-4">No Users Found</div>)}
+      <div className="UserList bg-dark rounded">
+        {error && <div className="text-danger text-center fs-4 my-4">{error}</div>}
+        {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center fs-4 my-4">No Users Found</div>)}
         {_.map(items, item => (
           <UserListItem 
             key={item._id}

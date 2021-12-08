@@ -126,7 +126,7 @@ function BugEditor({ auth, showError, showSuccess }) {
         setError(err.message);
         showError(err.message);
       });
-  }, [bugId, auth, showError, comments]);
+  }, [bugId, auth, showError]);
 
   useEffect(() => {
     if (!auth) {
@@ -509,28 +509,6 @@ function BugEditor({ auth, showError, showSuccess }) {
           </form>
           {error && <div className="mt-1 text-danger">{error}</div>}
           {success && <div className="mt-1 text-success">{success}</div>}
-          <div className="BugEditor-CommentList bg-dark bg-gradient rounded">
-            <div className="AddComment p-3">
-              <div>Number of Comments</div>
-              <div className="d-flex">
-                <img src={avatar} alt="PFP" className="avatar"/>
-                <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
-              </div>
-              <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickPostComment(evt)}>
-                <FaCommentAlt className="me-2" />
-                Post
-              </button>
-              <div>
-                {commentError && <div className="text-danger">{commentError}</div>}
-                {commentSuccess && <div className="text-success">{commentSuccess}</div>}
-              </div>
-            </div>
-            <div className="CommentList">
-              {!_.isEmpty(comments) ? (_.map(comments, (comment) => (
-                <CommentItem key={comment._id} comment={comment} auth={auth}/>
-              ))) : <div className="text-light text-center fs-4 mt-4">Be the First to Post a Comment For {bug?.title}!</div>}
-            </div>
-          </div>
           <div className="BugEditor-TestCaseList bg-dark bg-gradient rounded mt-3">
             <div className="AddTestCase p-3">
               <label htmlFor="AddTestCaseTitle" className="form-label visually-hidden"></label>
@@ -550,8 +528,30 @@ function BugEditor({ auth, showError, showSuccess }) {
                       testCase={testCase}
                       bugId={bugId}
                     />
-                  ))) : <div className="text-light fs-4 text-center mt-4">Be The First To Add A Test Case For {bug?.title}!</div>}
+                  ))) : <div className="text-light fs-4 text-center my-4">Be The First To Add A Test Case For {bug?.title}!</div>}
               </div>
+            </div>
+          </div>
+          <div className="BugEditor-CommentList bg-dark bg-gradient rounded mt-3">
+            <div className="AddComment p-3">
+              <div>Number of Comments</div>
+              <div className="d-flex">
+                <img src={avatar} alt="PFP" className="avatar"/>
+                <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
+              </div>
+              <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickPostComment(evt)}>
+                <FaCommentAlt className="me-2" />
+                Post
+              </button>
+              <div>
+                {commentError && <div className="text-danger">{commentError}</div>}
+                {commentSuccess && <div className="text-success">{commentSuccess}</div>}
+              </div>
+            </div>
+            <div className="CommentList">
+              {!_.isEmpty(comments) ? (_.map(comments, (comment) => (
+                <CommentItem key={comment._id} comment={comment} auth={auth}/>
+              ))) : <div className="text-light text-center fs-4 my-4">Be the First to Post a Comment For {bug?.title}!</div>}
             </div>
           </div>
           <div>
@@ -560,42 +560,6 @@ function BugEditor({ auth, showError, showSuccess }) {
           </div>
         </div>
       )}
-      {/* <div className="BugEditor-CommentList m-3">
-        <h2 className="BugEditor-BugComments-Header">Comment List</h2>
-        <div>
-          {_.map(comments, comment => (
-            <CommentItem
-              key = {comment.id}
-              comment = {comment}
-            />
-          ))}
-        </div>
-      </div>
-      <form className="BugEditor-BugComments-Form m-3">
-        <h2 className="BugEditor-BugComments-Header visually-hidden">Add Comment</h2>
-        <label htmlFor="BugEditor-BugComments-AddComment" className="form-label visually-hidden">Comment</label>
-        <input id="BugEditor-BugComments-AddComment" className="form-control" placeholder="Add Comment..." value={newCommentText} onChange={(evt) => onChangeCommentText(evt)}/>
-        <button type="submit" className="AddComment-Submit btn btn-success my-3" onClick={(evt) => onPostComment(evt)}>Post Comment</button>
-      </form>
-      <div className="BugEditor-TestCaseList m-3">
-        <h2 className="BugEditor-BugTestCases-Header">Test Case List</h2>
-        <div>
-          {_.map(testCases, testCase => (
-            <TestCaseItem
-              key = {testCase.id}
-              testCase = {testCase}
-            />
-          ))}
-        </div>
-      </div>
-      <form className="BugEditor-BugTestCases-Form m-3">
-        <h2 className="BugEditor-BugTestCases-Header">Add Test Case</h2>
-        <label htmlFor="BugEditor-BugTestCases-TestCaseTitle" className="form-label">Title</label>
-        <input id="BugEditor-BugTestCases-TestCaseTitle" className="form-control" value={newTestCaseTitle} onChange={(evt) => onChangeTestCaseTitle(evt)}/>
-        <label htmlFor="BugEditor-BugTestCases-TestCaseBody" className="form-label mt-3">Body</label>
-        <textarea id="BugEditor-BugTestCases-TestCaseBody" className="form-control" value={newTestCaseBody} onChange={(evt) => onChangeTestCaseBody(evt)}/>
-        <button type="submit" className="AddTestCase-Submit btn btn-success my-3" onClick={(evt) => onPostTestCase(evt)}>Post Test Case</button>
-      </form> */}
     </div>
   );
 }

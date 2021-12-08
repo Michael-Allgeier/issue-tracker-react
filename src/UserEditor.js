@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {FaUserEdit, FaTrashAlt} from 'react-icons/fa';
+import { FaUserEdit, FaTrashAlt } from 'react-icons/fa';
 import InputField from './InputField';
 import axios from 'axios';
 
@@ -109,37 +109,36 @@ function UserEditor({ auth, showError, showSuccess }) {
   function onClickDeleteUser(evt) {
     evt.preventDefault();
     if (confirm('Are you sure you want to remove this user?')) {
-
       axios(`${process.env.REACT_APP_API_URL}/api/user/${userId}`, {
         method: 'delete',
         headers: {
           authorization: `Bearer ${auth?.token}`,
         },
       })
-      .then((res) => {
-        setPending(false);
-        setError('');
-        showSuccess(`${user?.fullName} Deleted!`);
-      })
-      .catch((err) => {
-        setPending(false);
-        const resError = err?.response?.data?.error;
-        if (resError) {
-          console.error(resError);
-          if (typeof resError === 'string') {
-            setError(resError);
-            showError(resError);
-          } else if (resError.details) {
-            setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+        .then((res) => {
+          setPending(false);
+          setError('');
+          showSuccess(`${user?.fullName} Deleted!`);
+        })
+        .catch((err) => {
+          setPending(false);
+          const resError = err?.response?.data?.error;
+          if (resError) {
+            console.error(resError);
+            if (typeof resError === 'string') {
+              setError(resError);
+              showError(resError);
+            } else if (resError.details) {
+              setError(_.map(resError.details, (x) => <div>{x.message}</div>));
+            } else {
+              setError(JSON.stringify(resError));
+            }
           } else {
-            setError(JSON.stringify(resError));
+            console.error(err);
+            setError(err.message);
+            showError(err.message);
           }
-        } else {
-          console.error(err);
-          setError(err.message);
-          showError(err.message);
-        }
-      })
+        });
     } else {
     }
   }
@@ -227,145 +226,140 @@ function UserEditor({ auth, showError, showSuccess }) {
               onChange={(evt) => onInputChange(evt, setConfirmPassword)}
               error={confirmPasswordError}
             />
+            <div>
+              <div>Roles*</div>
+            </div>
+            <div className="form-check">
+              {_.includes(role, 'DEV') ? (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="DEV"
+                  id="flexCheckDev"
+                  defaultChecked
+                  onClick={(evt) => onClickCheckbox(evt)}
+                />
+              ) : (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="DEV"
+                  id="flexCheckDev"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                />
+              )}
+              {/* <input className="form-check-input" type="checkbox" value="DEV" id="flexCheckDev" defaultChecked onChange={(evt) => onClickCheckbox(evt)}/> */}
+              <label className="form-check-label" htmlFor="flexCheckDev">
+                DEV
+              </label>
+            </div>
+            <div className="form-check">
+              {_.includes(role, 'QA') ? (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="QA"
+                  id="flexCheckQA"
+                  defaultChecked
+                  onClick={(evt) => onClickCheckbox(evt)}
+                />
+              ) : (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="QA"
+                  id="flexCheckQA"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                />
+              )}
+              <label className="form-check-label" htmlFor="flexCheckQA">
+                QA
+              </label>
+            </div>
+            <div className="form-check">
+              {_.includes(role, 'TM') ? (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="TM"
+                  id="flexCheckTM"
+                  defaultChecked
+                  onClick={(evt) => onClickCheckbox(evt)}
+                />
+              ) : (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="TM"
+                  id="flexCheckTM"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                />
+              )}
+              <label className="form-check-label" htmlFor="flexCheckTM">
+                TM
+              </label>
+            </div>
+            <div className="form-check">
+              {_.includes(role, 'BA') ? (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="BA"
+                  id="flexCheckBA"
+                  defaultChecked
+                  onClick={(evt) => onClickCheckbox(evt)}
+                />
+              ) : (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="BA"
+                  id="flexCheckBA"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                />
+              )}
+              <label className="form-check-label" htmlFor="flexCheckBA">
+                BA
+              </label>
+            </div>
+            <div className="form-check">
+              {_.includes(role, 'PM') ? (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="PM"
+                  id="flexCheckPM"
+                  defaultChecked
+                  onClick={(evt) => onClickCheckbox(evt)}
+                />
+              ) : (
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="PM"
+                  id="flexCheckPM"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                />
+              )}
+              <label className="form-check-label" htmlFor="flexCheckPM">
+                PM
+              </label>
+            </div>
             <div className="d-flex justify-content-between">
               <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
-                <FaUserEdit className="me-2 mb-1"/>
+                <FaUserEdit className="me-2 mb-1" />
                 Submit Edit
               </button>
               <button className="btn btn-danger mt-1" type="submit" onClick={(evt) => onClickDeleteUser(evt)}>
-                <FaTrashAlt className="me-2 mb-1"/>
+                <FaTrashAlt className="me-2 mb-1" />
                 Delete User
               </button>
             </div>
           </form>
-          {(_.includes(authRole, 'Admin') || _.includes(authRole, 'TM')) && (
-            <div>
-              <form id="editRoleForm">
-                <div>
-                  <div>Roles*</div>
-                </div>
-                <div className="form-check">
-                  {_.includes(role, 'DEV') ? (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="DEV"
-                      id="flexCheckDev"
-                      defaultChecked
-                      onClick={(evt) => onClickCheckbox(evt)}
-                    />
-                  ) : (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="DEV"
-                      id="flexCheckDev"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
-                  {/* <input className="form-check-input" type="checkbox" value="DEV" id="flexCheckDev" defaultChecked onChange={(evt) => onClickCheckbox(evt)}/> */}
-                  <label className="form-check-label" htmlFor="flexCheckDev">
-                    DEV
-                  </label>
-                </div>
-                <div className="form-check">
-                  {_.includes(role, 'QA') ? (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="QA"
-                      id="flexCheckQA"
-                      defaultChecked
-                      onClick={(evt) => onClickCheckbox(evt)}
-                    />
-                  ) : (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="QA"
-                      id="flexCheckQA"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
-                  <label className="form-check-label" htmlFor="flexCheckQA">
-                    QA
-                  </label>
-                </div>
-                <div className="form-check">
-                  {_.includes(role, 'TM') ? (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="TM"
-                      id="flexCheckTM"
-                      defaultChecked
-                      onClick={(evt) => onClickCheckbox(evt)}
-                    />
-                  ) : (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="TM"
-                      id="flexCheckTM"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
-                  <label className="form-check-label" htmlFor="flexCheckTM">
-                    TM
-                  </label>
-                </div>
-                <div className="form-check">
-                  {_.includes(role, 'BA') ? (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="BA"
-                      id="flexCheckBA"
-                      defaultChecked
-                      onClick={(evt) => onClickCheckbox(evt)}
-                    />
-                  ) : (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="BA"
-                      id="flexCheckBA"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
-                  <label className="form-check-label" htmlFor="flexCheckBA">
-                    BA
-                  </label>
-                </div>
-                <div className="form-check">
-                  {_.includes(role, 'PM') ? (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="PM"
-                      id="flexCheckPM"
-                      defaultChecked
-                      onClick={(evt) => onClickCheckbox(evt)}
-                    />
-                  ) : (
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="PM"
-                      id="flexCheckPM"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
-                  <label className="form-check-label" htmlFor="flexCheckPM">
-                    PM
-                  </label>
-                </div>
-                <button type="submit" className="btn btn-primary">Edit Role</button>
-              </form>
-              <div className="my-2">*All Selected Roles Will Be Assigned To {user?.fullName}</div>
-              <div>*If An Unchecked Role Is Currently Assigned, It Will Be Unassigned From {user?.fullName}</div>
-            </div>
-          )}
+          <div>
+            <div className="my-2">*All Selected Roles Will Be Assigned To {user?.fullName}</div>
+            <div>*If An Unchecked Role Is Currently Assigned, It Will Be Unassigned From {user?.fullName}</div>
+          </div>
           {error && <div className="mt-1 text-danger">{error}</div>}
           {success && <div className="mt-1 text-success">{success}</div>}
         </div>

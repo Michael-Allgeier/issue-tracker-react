@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import {FaListAlt, FaDoorOpen, FaDoorClosed} from 'react-icons/fa';
+import {FaListAlt, FaDoorOpen, FaDoorClosed, FaPlusSquare} from 'react-icons/fa';
 
 function Navbar({ auth, onLogout }) {
   function onClickLogout(evt) {
@@ -47,6 +47,12 @@ function Navbar({ auth, onLogout }) {
               </li>
             </ul>
             { auth && ( <span className="navbar-text me-2">{auth.email}</span>)}
+            { auth && (
+              <NavLink to="/bug/report" className="btn btn-primary ms-2">
+                <FaPlusSquare className="me-2 mb-1"/>
+                Report Bug
+              </NavLink>
+            )}
           </div>
         </div>
       </nav>

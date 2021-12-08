@@ -2,21 +2,20 @@ import _ from "lodash";
 import { useState, useEffect } from "react";
 import axios from 'axios';
 import BugListItem from "./BugListItem";
-import InputField from './InputField'
+import {FaSearch} from 'react-icons/fa';
 
 function BugList({ auth, showError, showSuccess }) {
   const [items, setItems] = useState(null);
   const [error, setError] = useState('');
-  const [addBugError, setAddBugError] = useState('');
-  const [addBugSuccess, setAddBugSuccess] = useState('');
   const [pending, setPending] = useState(true);
-  const [bugTitle, setBugTitle] = useState('');
-  const [bugDescription, setBugDescription] = useState('');
-  const [bugStepsToReproduce, setBugStepsToReproduce] = useState('');
+  const [searchKeywords, setSearchKeywords] = useState('');
+  const [classificationFilter, setClassificationFilter] = useState('');
+  const [maxAgeFilter, setMaxAgeFilter] = useState('');
+  const [minAgeFilter, setMinAgeFilter] = useState('');
+  const [openFilter, setOpenFilter] = useState(null);
+  const [closedFilter, setClosedFilter] = useState(null);
+  const [sortByValue, setSortByValue] = useState('');
 
-  const bugTitleError = !bugTitle ? 'Bug Title is required' : '';
-  const bugDescriptionError = !bugDescription ? 'Bug Description is required' : '';
-  const bugStepsToReproduceError = !bugStepsToReproduce ? 'Bug Steps to Reproduce is required' : '';
 
   useEffect(() => {
     if(!auth) {
@@ -25,11 +24,14 @@ function BugList({ auth, showError, showSuccess }) {
       return;
     }
 
+    setOpenFilter(true);
+    setClosedFilter(false);
+
     setPending(true);
     setError('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/list`, {
       method: 'get',
-      params: {pageSize: 1000, role: 'TM'},
+      params: {pageSize: 100, closed: false, open: true},
       headers: {
         authorization: `Bearer ${auth?.token}`
       }
@@ -70,53 +72,72 @@ function BugList({ auth, showError, showSuccess }) {
     setValue(newValue);
   }
 
-  function onClickAddBug(evt) {
+  function onClickSearch(evt) {
     evt.preventDefault();
-    setAddBugError('');
-    setAddBugSuccess('');
     setPending(true);
+    setError('');
 
-    if (!bugTitle || !bugDescription || !bugStepsToReproduce) {
-      setAddBugError('Inputs can not be empty!');
-      showError('Fix errors');
-    }
-
-    axios(`${process.env.REACT_APP_API_URL}/api/bug/new`, {
-      method: 'put',
-      headers: {
-        authorization: `Bearer ${auth?.token}`,
-      },
-      data: {title: bugTitle, description: bugDescription, stepsToReproduce: bugStepsToReproduce}
-    })
-    .then((res) => {
-      setPending(false);
-      setAddBugSuccess('New Bug Added!');
-      showSuccess('New Bug Added!');
-      setAddBugError('');
-      setBugTitle('');
-      setBugDescription('');
-      setBugStepsToReproduce('');
-    })
-    .catch((err) => {
-      setPending(false);
-        setAddBugSuccess('');
+      axios(`${process.env.REACT_APP_API_URL}/api/bug/list`, {
+        method: 'get',
+        params: {pageSize: 100, keywords: searchKeywords, classification: classificationFilter, maxAge: maxAgeFilter, minAge: minAgeFilter, sortBy: sortByValue, open: openFilter, closed: closedFilter},
+        headers: {
+          authorization: `Bearer ${auth?.token}`
+        }
+      })
+      .then(res => {
+        setPending(false);
+        if (_.isArray(res.data)) {
+          setItems(res.data);
+          setError('');
+          showError(null);
+          showSuccess('Bugs Loaded!');
+        } else {
+          setError('Expected an array');
+          showError('Expected an array');
+        }
+      })
+      .catch(err => {
+        setPending(false);
         const resError = err?.response?.data?.error;
-        if (resError) {
+        if(resError) {
           if (typeof resError === 'string') {
-            setAddBugError(resError);
+            setError(resError);
             showError(resError);
           } else if (resError.details) {
-            setAddBugError(_.map(resError.details, (x) => <div>{x.message}</div>));
+            setError(_.map(resError.details, x => <div>{x.message}</div>))
           } else {
-            setAddBugError(JSON.stringify(resError));
+            setError(JSON.stringify(resError));
           }
         } else {
-          setAddBugError(err.message);
+          setError(err.message);
           showError(resError);
         }
-    });
+      });
   }
 
+  function onClickCheckbox(evt) {
+    evt.preventDefault();
+
+    const currentValue = evt.currentTarget.value;
+    const checked = evt.currentTarget.checked;
+
+    if (checked) {
+      if (currentValue === 'open') {
+        setOpenFilter(true);
+      }
+      if (currentValue === 'closed') {
+        setClosedFilter(true);
+      }
+    } else {
+      if (currentValue === 'open') {
+        setOpenFilter(false);
+      }
+      if (currentValue === 'closed') {
+        setClosedFilter(false);
+      }
+    }
+
+  }
 
   return (
     <div>
@@ -126,32 +147,67 @@ function BugList({ auth, showError, showSuccess }) {
           <span className="visually-hidden">Loading...</span>
         </div>
       )}
-      <div className="BugList rounded">
-        {error && <div className="text-danger text-center fs-4">{error}</div>}
-        {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center fs-4">No Bugs Found</div>)}
+      <div className="Search input-group mb-3">
+        <label htmlFor="BugList-Search" className="form-label visually-hidden">Search</label>
+        <input type="text" id="BugList-Search" className="form-control" value={searchKeywords} placeholder="Search..." onChange={(evt) => onInputChange(evt, setSearchKeywords)}/>
+        <button className="btn btn-primary" type="submit" onClick={(evt) => onClickSearch(evt)}>
+          <FaSearch className="me-2 mb-1"/>
+          Search
+        </button>
+      </div>
+      <div className="Filters mb-3">
+        <div>
+          <label htmlFor="Filters-Classification" className="form-label visually-hidden">Classification</label>
+          <select className="form-select" id="Filters-Classification" value={classificationFilter} onChange={(evt) => onInputChange(evt, setClassificationFilter)}>
+            <option value="">Select Classification...</option>
+            <option value="Unclassified">Unclassified</option>
+            <option value="Unapproved">Unapproved</option>
+            <option value="Approved">Approved</option>
+            <option value="Duplicate">Duplicate</option>
+          </select>
+        </div>
+        <div className="mt-1">
+          <label htmlFor="Filters-SortBy" className="form-label visually-hidden">Sort By</label>
+          <select className="form-select" id="Filters-SortBy" value={sortByValue} onChange={(evt) => onInputChange(evt, setSortByValue)}>
+            <option value="">Select Sorting...</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="title">Title</option>
+            <option value="classification">Classification</option>
+            <option value="assignedTo">Assigned To</option>
+            <option value="createdBy">Created By</option>
+          </select>
+        </div>
+        <div className="row mt-1">
+          <div className="col-md-6">
+            <label htmlFor="Filters-maxAge" className="form-label visually-hidden">Max Age</label>
+            <input type="number" className="form-control" id="Filters-maxAge" value={maxAgeFilter} onChange={(evt) => onInputChange(evt, setMaxAgeFilter)} placeholder="Max Age..."/>
+          </div>
+          <div className="col-md-6">
+            <label htmlFor="Filters-minAge" className="form-label visually-hidden">Min Age</label>
+            <input type="number" className="form-control" id="Filters-minAge" value={minAgeFilter} onChange={(evt) => onInputChange(evt, setMinAgeFilter)} placeholder="Min Age..."/>
+          </div>
+        </div>
+        <div className="mt-1">
+          <span className="fs-5">
+            <input type="checkbox" className="form-check-input" value="open" id="Filters-Open" onChange={(evt) => onClickCheckbox(evt)} defaultChecked/>
+            <label htmlFor="Filters-Open" className="form-label ms-1">Open</label>
+          </span>
+          <span className="ms-3 fs-5">
+            <input type="checkbox" className="form-check-input" value="closed" id="Filters-Close" onChange={(evt) => onClickCheckbox(evt)}/>
+            <label htmlFor="Filters-Close" className="form-label ms-1">Closed</label>
+          </span>
+        </div>
+      </div>
+      <div className="BugList bg-dark rounded">
+        {error && <div className="text-danger text-center fs-4 my-4">{error}</div>}
+        {!pending && !error && _.isEmpty(items) && (<div className="text-danger text-center fs-4 my-4">No Bugs Found</div>)}
         {_.map(items, item => (
           <BugListItem 
             key={item._id}
             item={item}
           />
         ))}
-      </div>
-      <div className="AddBug mt-3 p-3">
-        <h2>Create Bug</h2>
-        <form className="AddBug-Form">
-          <label htmlFor="AddBug-Title" className="form-label">Title</label>
-          <input id="AddBug-Title" className="form-control" type="text" value={bugTitle} onChange={(evt) => onInputChange(evt, setBugTitle)}/>
-          <div className="text-danger">{bugTitleError}</div>
-          <label htmlFor="AddBug-Description" className="form-label mt-2">Description</label>
-          <textarea id="AddBug-Description" className="form-control" type="text" value={bugDescription} onChange={(evt) => onInputChange(evt, setBugDescription)}/>
-          <div className="text-danger">{bugDescriptionError}</div>
-          <label htmlFor="AddBug-StepsToReproduce" className="form-label mt-2">Steps To Reproduce</label>
-          <textarea id="AddBug-StepsToReproduce" className="form-control" type="text" value={bugStepsToReproduce} onChange={(evt) => onInputChange(evt, setBugStepsToReproduce)}/>
-          <div className="text-danger">{bugStepsToReproduceError}</div>
-          <button className="btn btn-primary mt-2" type="submit" onClick={(evt) => onClickAddBug(evt)}>
-            Add Bug
-          </button>
-        </form>
       </div>
     </div>
   );

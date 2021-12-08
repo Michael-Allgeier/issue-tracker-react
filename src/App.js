@@ -3,6 +3,7 @@ import RegisterForm from './RegisterForm';
 import BugList from './BugList';
 //import BugListItem from './BugListItem';
 import BugEditor from './BugEditor';
+import ReportBug from './ReportBug';
 import UserList from './UserList';
 //import UserListItem from './UserListItem';
 import UserEditor from './UserEditor';
@@ -97,6 +98,7 @@ function App() {
           <Route path="/user/list" element={<UserList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/:userId" element={<UserEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/:bugId/test/:testId" element={<TestCaseEditor auth={auth} showError={showError} showSuccess={showSuccess}/>} />
+          <Route path="/bug/report" element={<ReportBug auth={auth} showError={showError} showSuccess={showSuccess}/>} />
           <Route path="*" element={<NotFound/> } />
         </Routes>
       </main>
