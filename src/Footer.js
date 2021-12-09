@@ -1,6 +1,9 @@
 function Footer() {
   return (
-    <footer className="p-3 text-center bg-dark">&copy; Michael Allgeier 2021</footer>
+    <footer className="p-3 bg-dark text-center">
+      <div className="text-center">&copy; Michael Allgeier 2021</div>
+      <div className="text-dark">Congrats You Found Me!</div>
+    </footer>
   );
 }
 

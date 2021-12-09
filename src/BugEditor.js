@@ -424,28 +424,16 @@ function BugEditor({ auth, showError, showSuccess }) {
               onChange={(evt) => onInputChange(evt, setTitle)}
               error={titleError}
             />
-            <InputField
-              label="Description"
-              id="BugEditor-Description"
-              type="text"
-              value={description}
-              onChange={(evt) => onInputChange(evt, setDescription)}
-              error={descriptionError}
-            />
-            <InputField
-              label="Steps To Reproduce"
-              id="BugEditor-StepsToReproduce"
-              type="text"
-              value={stepsToReproduce}
-              onChange={(evt) => onInputChange(evt, setStepsToReproduce)}
-              error={stepsToReproduceError}
-            />
-            <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+            <label htmlFor='BugEditor-Description' className='form-label'>Description</label>
+            <textarea id="BugEditor-Description" className="form-control" type="text" value={description} onChange={(evt) => onInputChange(evt, setDescription)} error={descriptionError}/>
+            <label htmlFor='BugEditor-StepsToReproduce' className='form-label mt-3'>Steps To Reproduce</label>
+            <textarea id="BugEditor-StepsToReproduce" className="form-control" type="text" value={stepsToReproduce} onChange={(evt) => onInputChange(evt, setStepsToReproduce)} error={stepsToReproduceError}/>
+            <button className="btn btn-primary mt-3" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
               <FaEdit className="me-2 mb-1"/>
               Submit Edit
             </button>
-            {editError && <div className="mt-1 text-danger">{editError}</div>}
-            {editSuccess && <div className="mt-1 text-success">{editSuccess}</div>}
+            {editError && <div className="mt-2 text-danger">{editError}</div>}
+            {editSuccess && <div className="mt-2 text-success">{editSuccess}</div>}
           </form>
           <form className="mt-3">
             <div className="input-group mb-3">
