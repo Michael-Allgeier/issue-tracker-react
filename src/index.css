@@ -1,5 +1,5 @@
 body {
-  background-image: url(./img/backgroundimg.jpeg);
+  background-image: url(./img/blackbackground.jpeg);
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
@@ -11,10 +11,6 @@ body {
 .navbar {
   width: 100vw;
   z-index: 1;
-}
-
-footer {
-  border-top: 1px solid rgb(116, 116, 116)
 }
 
 .form-control:disabled, .form-control[readonly] {
