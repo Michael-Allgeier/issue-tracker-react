@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BugListItem from './BugListItem';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 
 function BugList({ auth, showError, showSuccess }) {
   const [items, setItems] = useState(null);
@@ -98,7 +98,13 @@ function BugList({ auth, showError, showSuccess }) {
           setItems(res.data);
           setError('');
           showError(null);
-          showSuccess('Bugs Loaded!');
+          showSuccess('Filters Applied!');
+          const filterBtn = document.getElementById('BugList-ShowFilters');
+          const filterList = document.getElementById('BugList-Filters');
+
+          filterBtn.classList.add('d-none');
+          filterList.classList.remove('d-none');
+          filterList.classList.add('d-block');
         } else {
           setError('Expected an array');
           showError('Expected an array');
@@ -146,6 +152,16 @@ function BugList({ auth, showError, showSuccess }) {
     }
   }
 
+  function onClickShowFilters(evt) {
+    evt.preventDefault();
+    const filterBtn = document.getElementById('BugList-ShowFilters');
+    const filterList = document.getElementById('BugList-Filters');
+
+    filterBtn.classList.add('d-none');
+    filterList.classList.remove('d-none');
+    filterList.classList.add('d-block');
+  }
+
   return (
     <div>
       <h1 className="text-center visually-hidden">Bug List</h1>
@@ -156,9 +172,9 @@ function BugList({ auth, showError, showSuccess }) {
       )}
       <div className="BugList bg-dark rounded">
         {error && <div className="text-danger text-center fs-4 my-4">{error}</div>}
-        {!error && !pending &&
+        {!error && !pending && (
           <div className="p-3 border-bottom border-light">
-            <div className="Search input-group mb-5">
+            <div className="Search input-group mb-3">
               <label htmlFor="BugList-Search" className="form-label visually-hidden">
                 Search
               </label>
@@ -167,7 +183,7 @@ function BugList({ auth, showError, showSuccess }) {
                 id="BugList-Search"
                 className="form-control"
                 value={searchKeywords}
-                placeholder="Search..."
+                placeholder="Search List..."
                 onChange={(evt) => onInputChange(evt, setSearchKeywords)}
               />
               <button className="btn btn-primary" type="submit" onClick={(evt) => onClickSearch(evt)}>
@@ -175,7 +191,16 @@ function BugList({ auth, showError, showSuccess }) {
                 Search
               </button>
             </div>
-            <div className="Filters">
+            <button
+              id="BugList-ShowFilters"
+              className="btn btn-primary"
+              type="submit"
+              onClick={(evt) => onClickShowFilters(evt)}
+            >
+              <FaFilter className="me-2 mb-1" />
+              Filter List
+            </button>
+            <div className="Filters d-none mt-5" id="BugList-Filters">
               <div className="mb-3">
                 <label htmlFor="Filters-Classification" className="form-label visually-hidden">
                   Classification
@@ -203,7 +228,6 @@ function BugList({ auth, showError, showSuccess }) {
                   value={sortByValue}
                   onChange={(evt) => onInputChange(evt, setSortByValue)}
                 >
-                  <option value="">Select Sorting...</option>
                   <option value="newest">Newest</option>
                   <option value="oldest">Oldest</option>
                   <option value="title">Title</option>
@@ -213,19 +237,6 @@ function BugList({ auth, showError, showSuccess }) {
                 </select>
               </div>
               <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="Filters-maxAge" className="form-label visually-hidden">
-                    Max Age
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="Filters-maxAge"
-                    value={maxAgeFilter}
-                    onChange={(evt) => onInputChange(evt, setMaxAgeFilter)}
-                    placeholder="Max Age..."
-                  />
-                </div>
                 <div className="col-md-6 mb-3">
                   <label htmlFor="Filters-minAge" className="form-label visually-hidden">
                     Min Age
@@ -239,29 +250,63 @@ function BugList({ auth, showError, showSuccess }) {
                     placeholder="Min Age..."
                   />
                 </div>
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="Filters-maxAge" className="form-label visually-hidden">
+                    Max Age
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="Filters-maxAge"
+                    value={maxAgeFilter}
+                    onChange={(evt) => onInputChange(evt, setMaxAgeFilter)}
+                    placeholder="Max Age..."
+                  />
+                </div>
               </div>
               <div>
                 <span className="fs-5">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    value="open"
-                    id="Filters-Open"
-                    onChange={(evt) => onClickCheckbox(evt)}
-                    defaultChecked
-                  />
+                  {openFilter === true ? (
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      value="open"
+                      id="Filters-Open"
+                      onChange={(evt) => onClickCheckbox(evt)}
+                      defaultChecked
+                    />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      value="open"
+                      id="Filters-Open"
+                      onChange={(evt) => onClickCheckbox(evt)}
+                    />
+                  )}
                   <label htmlFor="Filters-Open" className="form-label ms-1">
                     Open
                   </label>
                 </span>
                 <span className="ms-3 fs-5">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    value="closed"
-                    id="Filters-Close"
-                    onChange={(evt) => onClickCheckbox(evt)}
-                  />
+                  {closedFilter === true ? (
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      value="closed"
+                      id="Filters-Close"
+                      onChange={(evt) => onClickCheckbox(evt)}
+                      defaultChecked
+                    />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      value="closed"
+                      id="Filters-Close"
+                      onChange={(evt) => onClickCheckbox(evt)}
+                    />
+                  )}
                   <label htmlFor="Filters-Close" className="form-label ms-1">
                     Closed
                   </label>
@@ -269,7 +314,7 @@ function BugList({ auth, showError, showSuccess }) {
               </div>
             </div>
           </div>
-        }
+        )}
         {!pending && !error && _.isEmpty(items) && (
           <div className="text-danger text-center fs-4 my-4">No Bugs Found</div>
         )}
