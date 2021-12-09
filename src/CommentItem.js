@@ -3,7 +3,7 @@ import avatar from './img/avatar.png';
 
 function CommentItem({ comment, auth }) {
   return (
-    <div id={`comment-${comment._id}`} className="CommentItem card p-3 bg-dark bg-gradient">
+    <div id={`comment-${comment._id}`} className="CommentItem card p-3 bg-dark bg-gradient border-bottom border-light">
       <div>
         <div className="d-flex align-items-center">
           <img src={avatar} alt="PFP" className="avatar" />

@@ -74,31 +74,6 @@ body {
 .AddTestCase {
   border-bottom: 1px solid gray;
 }
- 
-
-.CommentItem {
-  border: none;
-  border-bottom: 1px solid gray;
-  border-radius: 0;
-}
-
-.BugListItem {
-  border: none;
-  border-bottom: 2px solid gray;
-  border-radius: 0;
-}
-
-.UserListItem {
-  border: none;
-  border-bottom: 2px solid gray;
-  border-radius: 0;
-}
-
-.TestCaseItem {
-  border: none;
-  border-bottom: 1px solid gray;
-  border-radius: 0;
-} 
 
 .avatar {
   width: 50px;

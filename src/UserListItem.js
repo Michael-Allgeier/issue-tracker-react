@@ -8,7 +8,7 @@ function UserListItem({ item }) {
 
   return (
     <Link to={`/user/${item._id}`} className="text-light text-decoration-none">
-      <div className="UserListItem card bg-dark">
+      <div className="UserListItem card bg-dark border-bottom border-light">
         <div className="card-body align-items-center">
           <div className="card-title fs-4">{item.fullName}</div>
           <div>

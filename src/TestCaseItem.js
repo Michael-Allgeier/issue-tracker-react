@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function TestCaseItem({ testCase, bugId }) {
   return (
     <Link to={`/bug/${bugId}/test/${testCase._id}`} className="text-light text-decoration-none">
-      <div id={`testCase-${testCase._id}`} className="TestCaseItem card bg-dark bg-gradient p-3">
+      <div id={`testCase-${testCase._id}`} className="TestCaseItem card bg-dark bg-gradient p-3 border-bottom border-light">
         <div>
           <div id={`testCase-${testCase._id}-testCaseText`} className="card-text fs-5 testCase-text ms-2">
             {testCase?.testCaseTitle ? testCase.testCaseTitle : testCase.testCase}

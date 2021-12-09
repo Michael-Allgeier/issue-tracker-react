@@ -4,7 +4,7 @@ import moment from 'moment';
 function BugListItem({ item }) {
   return (
     <Link to={`/bug/${item._id}`} className="text-light text-decoration-none">
-      <div className="BugListItem card bg-dark">
+      <div className="BugListItem card bg-dark border-bottom border-light">
         <div className="card-body align-items-center">
           <div className="card-title fs-4">{item.title}</div>
           <div className="card-text">
