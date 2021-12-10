@@ -2,11 +2,11 @@ import { useState } from 'react';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import InputField from './InputField';
 
 
-function RegisterForm({ onLogin, showError }) {
+function RegisterForm({ showError, showSuccess }) {
   const [ email, setEmail ] = useState('');
   const [ confirmEmail, setConfirmEmail ] = useState('');
   const [ password, setPassword ] = useState('');
@@ -17,6 +17,7 @@ function RegisterForm({ onLogin, showError }) {
   const [ error, setError ] = useState('');
   const [ success, setSuccess ] = useState('');
   const [pending, setPending] = useState(null);
+  const navigate = useNavigate();
 
   const emailError = 
     !email ? 'Email is required' :
@@ -61,12 +62,13 @@ function RegisterForm({ onLogin, showError }) {
     .then(res => {
       setPending(false);
       setSuccess(res.data.message);
-      const authPayload = jwt.decode(res.data.token);
-      const auth = {
-        token: res.data.token,
-        payload: authPayload
-      };
-      onLogin(auth);
+      // const authPayload = jwt.decode(res.data.token);
+      // const auth = {
+      //   token: res.data.token,
+      //   payload: authPayload
+      // };
+      showSuccess('Account Registered!')
+      navigate('/login');
     })
     .catch(err => {
       setPending(false);

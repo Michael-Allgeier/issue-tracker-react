@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import BugListItem from './BugListItem';
-import { FaSearch, FaFilter } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaWindowClose } from 'react-icons/fa';
 
 function BugList({ auth, showError, showSuccess }) {
   const [items, setItems] = useState(null);
@@ -15,6 +15,7 @@ function BugList({ auth, showError, showSuccess }) {
   const [openFilter, setOpenFilter] = useState(null);
   const [closedFilter, setClosedFilter] = useState(null);
   const [sortByValue, setSortByValue] = useState('');
+  const [areFiltersVisible, setAreFiltersVisible] = useState(false);
 
   useEffect(() => {
     if (!auth) {
@@ -99,12 +100,12 @@ function BugList({ auth, showError, showSuccess }) {
           setError('');
           showError(null);
           showSuccess('Filters Applied!');
-          const filterBtn = document.getElementById('BugList-ShowFilters');
-          const filterList = document.getElementById('BugList-Filters');
+          // const filterBtn = document.getElementById('BugList-ShowFilters');
+          // const filterList = document.getElementById('BugList-Filters');
 
-          filterBtn.classList.add('d-none');
-          filterList.classList.remove('d-none');
-          filterList.classList.add('d-block');
+          // filterBtn.classList.add('d-none');
+          // filterList.classList.remove('d-none');
+          // filterList.classList.add('d-block');
         } else {
           setError('Expected an array');
           showError('Expected an array');
@@ -154,12 +155,12 @@ function BugList({ auth, showError, showSuccess }) {
 
   function onClickShowFilters(evt) {
     evt.preventDefault();
-    const filterBtn = document.getElementById('BugList-ShowFilters');
-    const filterList = document.getElementById('BugList-Filters');
+    setAreFiltersVisible(true);
+  }
 
-    filterBtn.classList.add('d-none');
-    filterList.classList.remove('d-none');
-    filterList.classList.add('d-block');
+  function onClickCloseFilters(evt) {
+    evt.preventDefault();
+    setAreFiltersVisible(false);
   }
 
   return (
@@ -193,14 +194,14 @@ function BugList({ auth, showError, showSuccess }) {
             </div>
             <button
               id="BugList-ShowFilters"
-              className="btn btn-primary"
+              className={areFiltersVisible ? "d-none" : "btn btn-primary"}
               type="submit"
               onClick={(evt) => onClickShowFilters(evt)}
             >
               <FaFilter className="me-2 mb-1" />
               Filter List
             </button>
-            <div className="Filters d-none mt-5" id="BugList-Filters">
+            <div className={areFiltersVisible ? "Filters mt-5" : 'd-none'} id="BugList-Filters">
               <div className="mb-3">
                 <label htmlFor="Filters-Classification" className="form-label visually-hidden">
                   Classification
@@ -228,6 +229,7 @@ function BugList({ auth, showError, showSuccess }) {
                   value={sortByValue}
                   onChange={(evt) => onInputChange(evt, setSortByValue)}
                 >
+                  <option value="">Sort By...</option>
                   <option value="newest">Newest</option>
                   <option value="oldest">Oldest</option>
                   <option value="title">Title</option>
@@ -312,6 +314,12 @@ function BugList({ auth, showError, showSuccess }) {
                   </label>
                 </span>
               </div>
+              <span>
+                <button type="submit" className='btn btn-danger' onClick={(evt) => onClickCloseFilters(evt)}>
+                  <FaWindowClose className='me-2 mb-1' />
+                  Close Filters
+                </button>
+              </span>
             </div>
           </div>
         )}

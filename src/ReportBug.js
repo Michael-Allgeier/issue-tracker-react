@@ -10,6 +10,7 @@ function ReportBug({auth, showError, showSuccess}) {
   const [addBugSuccess, setAddBugSuccess] = useState('');
   const [addBugError, setAddBugError] = useState('');
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
@@ -24,6 +25,13 @@ function ReportBug({auth, showError, showSuccess}) {
 
   function onClickAddBug(evt) {
     evt.preventDefault();
+
+    if (!auth) {
+      setError('Must be Logged In');
+      setPending(false);
+      return;
+    }
+
     setAddBugError('');
     setAddBugSuccess('');
     setPending(true);
@@ -80,6 +88,7 @@ function ReportBug({auth, showError, showSuccess}) {
             <span className="visually-hidden">Loading...</span>
           </div>
         )}
+        {error && <div className="AddBug-Error text-danger text-center fs-4 my-4 bg-dark">{error}</div>}
         <form className="AddBug-Form">
           <label htmlFor="AddBug-Title" className="form-label">Title</label>
           <input id="AddBug-Title" className="form-control" type="text" value={bugTitle} onChange={(evt) => onInputChange(evt, setBugTitle)}/>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import _, { get } from 'lodash';
 import axios from 'axios';
 import UserListItem from './UserListItem';
-import { FaSearch, FaFilter } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaWindowClose } from 'react-icons/fa';
 
 function UserList({ auth, showError, showSuccess }) {
   const [items, setItems] = useState(null);
@@ -13,6 +13,7 @@ function UserList({ auth, showError, showSuccess }) {
   const [maxAgeFilter, setMaxAgeFilter] = useState('');
   const [minAgeFilter, setMinAgeFilter] = useState('');
   const [sortByValue, setSortByValue] = useState('');
+  const [areFiltersVisible, setAreFiltersVisible] = useState(false);
 
   useEffect(() => {
     if (!auth) {
@@ -85,12 +86,6 @@ function UserList({ auth, showError, showSuccess }) {
         setError('');
         showError(null);
         showSuccess('Filters Applied!');
-        const filterBtn = document.getElementById('UserList-ShowFilters');
-        const filterList = document.getElementById('UserList-Filters');
-
-        filterBtn.classList.add('d-none');
-        filterList.classList.remove('d-none');
-        filterList.classList.add('d-block');
       } else {
         setError('Expected an Array');
         showError('Expected an array');
@@ -105,12 +100,12 @@ function UserList({ auth, showError, showSuccess }) {
 
   function onClickShowFilters(evt) {
     evt.preventDefault();
-    const filterBtn = document.getElementById('UserList-ShowFilters');
-    const filterList = document.getElementById('UserList-Filters');
+    setAreFiltersVisible(true);
+  }
 
-    filterBtn.classList.add('d-none');
-    filterList.classList.remove('d-none');
-    filterList.classList.add('d-block');
+  function onClickCloseFilters(evt) {
+    evt.preventDefault();
+    setAreFiltersVisible(false);
   }
 
   return (
@@ -137,14 +132,14 @@ function UserList({ auth, showError, showSuccess }) {
             </div>
             <button
               id="UserList-ShowFilters"
-              className="btn btn-primary"
+              className={areFiltersVisible ? "d-none" : "btn btn-primary"}
               type="submit"
               onClick={(evt) => onClickShowFilters(evt)}
             >
               <FaFilter className="me-2 mb-1" />
               Filter List
             </button>
-            <div className="Filters d-none mt-5" id="UserList-Filters">
+            <div className={areFiltersVisible ? "Filters mt-5" : 'd-none'} id="UserList-Filters">
               <div className="mb-3">
                 <label htmlFor="UserList-Filters-Role" className="form-label visually-hidden">
                   Role
@@ -173,6 +168,7 @@ function UserList({ auth, showError, showSuccess }) {
                   value={sortByValue}
                   onChange={(evt) => onInputChange(evt, setSortByValue)}
                 >
+                  <option value="">Sort By...</option>
                   <option value="givenName">Given(First) Name</option>
                   <option value="familyName">Family(Last) Name</option>
                   <option value="role">Role</option>
@@ -207,6 +203,12 @@ function UserList({ auth, showError, showSuccess }) {
                     placeholder="Max Age..."
                   />
                 </div>
+              </div>
+              <div>
+                <button type="submit" className='btn btn-danger' onClick={(evt) => onClickCloseFilters(evt)}>
+                  <FaWindowClose className='me-2 mb-1'/>
+                  Close Filters
+                </button>
               </div>
             </div>
           </div>

@@ -24,7 +24,7 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [pending, setPending] = useState(true);
   const [users, setUsers] = useState(null);
   const [comments, setComments] = useState(null);
-  const [numComments, setNumComments] = useState(null);
+  const [numComments, setNumComments] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [commentError, setCommentError] = useState('');
   const [commentSuccess, setCommentSuccess] = useState('');
@@ -522,7 +522,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           </div>
           <div className="BugEditor-CommentList bg-dark bg-gradient rounded mt-3">
             <div className="AddComment p-3">
-              <div>Number of Comments</div>
+              {numComments}
               <div className="d-flex">
                 <img src={avatar} alt="PFP" className="avatar"/>
                 <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>

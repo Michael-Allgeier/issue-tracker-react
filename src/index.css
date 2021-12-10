@@ -58,13 +58,19 @@ body {
 .BugList {
   width: 100;
   border: 2px solid white;
-  box-shadow: 3px 5px 10px black;
+  box-shadow: 1px 1px 10px white;
+}
+
+.AddBug-Error {
+  width: 100;
+  border: 2px solid white;
+  box-shadow: 1px 1px 10px white;
 }
 
 .UserList {
   width: 100;
   border: 2px solid white;
-  box-shadow: 3px 5px 10px black;
+  box-shadow: 1px 1px 10px white;
 }
 
 .AddComment {
