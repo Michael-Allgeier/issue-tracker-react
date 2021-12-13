@@ -21,7 +21,7 @@ function TestCaseEditor(auth, showError, showSuccess) {
 
   useEffect(() => {
     if (!auth) {
-      setError('Must be Logged In');
+      setError('Must Be Logged In');
       setPending(false);
       return;
     }

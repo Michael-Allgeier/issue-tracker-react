@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import _, { get } from 'lodash';
+import _ from 'lodash';
 import axios from 'axios';
 import UserListItem from './UserListItem';
 import { FaSearch, FaFilter, FaWindowClose } from 'react-icons/fa';
@@ -17,7 +17,7 @@ function UserList({ auth, showError, showSuccess }) {
 
   useEffect(() => {
     if (!auth) {
-      setError('Must be Logged In');
+      setError('Must Be Logged In');
       setPending(false);
       return;
     }

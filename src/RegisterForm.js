@@ -96,8 +96,8 @@ function RegisterForm({ showError, showSuccess }) {
 
     return (
       <div id="RegisterForm" className="RegisterForm">
-        <h1 className="RegisterForm-Header m-3 text-center">Register</h1>
         <form className="RegisterForm-Form m-3 p-3">
+        <h1 className="RegisterForm-Header m-3 text-center">Register</h1>
           <InputField 
             label="Given Name (First Name)"
             id="RegisterForm-GivenName"

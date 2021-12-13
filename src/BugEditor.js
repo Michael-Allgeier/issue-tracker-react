@@ -155,11 +155,7 @@ function BugEditor({ auth, showError, showSuccess }) {
   function onClickSubmitEdit(evt) {
     evt.preventDefault();
 
-    setEditSuccess('');
-    setEditError('');
-
     if (titleError || descriptionError || stepsToReproduceError) {
-      setEditError('Please fix errors');
       showError('Please fix errors');
       return;
     }
@@ -176,8 +172,6 @@ function BugEditor({ auth, showError, showSuccess }) {
         // res.data.title = title;
         // res.data.description = description;
         // res.data.stepsToReproduce = stepsToReproduce;
-        setEditError('');
-        setEditSuccess('Bug Updated!');
         showSuccess('Bug Updated!');
       })
       .catch((err) => {
@@ -185,7 +179,6 @@ function BugEditor({ auth, showError, showSuccess }) {
         const resError = err?.response?.data?.error;
         if (resError) {
           if (typeof resError === 'string') {
-            setEditError(resError);
             showError(resError);
           } else if (resError.details) {
             setEditError(_.map(resError.details, (x) => <div>{x.message}</div>));
@@ -193,7 +186,6 @@ function BugEditor({ auth, showError, showSuccess }) {
             setEditError(JSON.stringify(resError));
           }
         } else {
-          setEditError(err.message);
           showError(resError);
         }
       });
@@ -212,8 +204,6 @@ function BugEditor({ auth, showError, showSuccess }) {
       .then((res) => {
         setPending(false);
         res.data.classification = classification;
-        setError('');
-        setSuccess('Bug Classified!');
         showSuccess('Bug Classified!');
       })
       .catch((err) => {
@@ -249,7 +239,6 @@ function BugEditor({ auth, showError, showSuccess }) {
         setPending(false);
         res.data.assignedTo = assignedTo;
         setError('');
-        setSuccess('User Assigned to Bug!');
         showSuccess('User Assigned to Bug!');
       })
       .catch((err) => {
@@ -285,7 +274,6 @@ function BugEditor({ auth, showError, showSuccess }) {
         setPending(false);
         res.data.closed = closed;
         setError('');
-        console.log(closed);
         showSuccess('Bug Updated!');
       })
       .catch((err) => {
@@ -465,6 +453,7 @@ function BugEditor({ auth, showError, showSuccess }) {
                 className="form-select"
                 value={assignedTo}
               >
+                <option value="">No User Assigned</option>
                 {_.map(users, (user) => (
                   <option key={user._id} value={user._id}>
                     {user.fullName + ' '} {!user.role ? ' ' : user.role + '  '}

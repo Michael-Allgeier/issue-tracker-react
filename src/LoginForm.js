@@ -80,8 +80,8 @@ function LoginForm({ onLogin, showError }) {
 
   return (
     <div id="LoginForm" className="LoginForm">
-      <h1 className="LoginForm-Header m-3 text-center">Login</h1>
       <form className="LoginForm-Form m-3 p-3">
+      <h1 className="LoginForm-Header m-3 text-center">Login</h1>
         <InputField 
           label="Email"
           id="LoginForm-Email"
