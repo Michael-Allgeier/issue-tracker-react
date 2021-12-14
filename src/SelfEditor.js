@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import _ from  'lodash';
 import { useState, useEffect } from 'react';
-import {FaUserEdit, FaTrashAlt} from 'react-icons/fa';
+import {FaUserEdit} from 'react-icons/fa';
 import InputField from './InputField';
 import axios from 'axios';
 

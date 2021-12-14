@@ -15,16 +15,17 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [description, setDescription] = useState('');
   const [stepsToReproduce, setStepsToReproduce] = useState('');
   const [classification, setClassification] = useState('');
-  const [assignedTo, setAssignedTo] = useState(null);
-  const [closed, setClosed] = useState(null);
+  const [assignedTo, setAssignedTo] = useState('');
+  const [closed, setClosed] = useState(false);
   const [error, setError] = useState('');
   const [editError, setEditError] = useState('');
   const [success, setSuccess] = useState('');
   const [editSuccess, setEditSuccess] = useState('');
   const [pending, setPending] = useState(true);
+  const [commentPending, setCommentPending] = useState(false);
+  const [testCasePending, setTestCasePending] = useState(false);
   const [users, setUsers] = useState(null);
   const [comments, setComments] = useState(null);
-  const [numComments, setNumComments] = useState(0);
   const [newComment, setNewComment] = useState('');
   const [commentError, setCommentError] = useState('');
   const [commentSuccess, setCommentSuccess] = useState('');
@@ -173,6 +174,7 @@ function BugEditor({ auth, showError, showSuccess }) {
         // res.data.description = description;
         // res.data.stepsToReproduce = stepsToReproduce;
         showSuccess('Bug Updated!');
+        setEditSuccess('Bug Updated!');
       })
       .catch((err) => {
         setPending(false);
@@ -299,12 +301,12 @@ function BugEditor({ auth, showError, showSuccess }) {
     evt.preventDefault();
     setCommentError('');
     setCommentSuccess('');
-    setPending(true);
+    setCommentPending(true);
 
     if (!newComment) {
       setCommentError('Comment can not be empty!');
       showError('Comment can not be empty!');
-      setPending(false);
+      setCommentPending(false);
     } else {
       axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/comment/new`, {
         method: 'put',
@@ -314,16 +316,15 @@ function BugEditor({ auth, showError, showSuccess }) {
         data: { comment: newComment },
       })
         .then((res) => {
-          setPending(false);
+          setCommentPending(false);
           res.data.comment = newComment;
           setCommentError('');
           setCommentSuccess('Comment Posted');
           showSuccess('Comment Posted');
           setComments([...comments, {comment: newComment, author: auth}]);
-          document.getElementById('AddComment').value = '';
         })
         .catch((err) => {
-          setPending(false);
+          setCommentPending(false);
           setCommentSuccess('');
           const resError = err?.response?.data?.error;
           if (resError) {
@@ -347,10 +348,11 @@ function BugEditor({ auth, showError, showSuccess }) {
     evt.preventDefault();
     setCommentError('');
     setCommentSuccess('');
-    setPending(true);
+    setTestCasePending(true);
 
     if (!newTestCase || !newTestCaseTitle) {
       setTestCaseError('Inputs can not be empty!');
+      setTestCasePending(false);
     }
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/new`, {
@@ -361,14 +363,14 @@ function BugEditor({ auth, showError, showSuccess }) {
       data: { testCase: newTestCase, testCaseTitle: newTestCaseTitle },
     })
       .then((res) => {
-        setPending(false);
+        setTestCasePending(false);
         setTestCaseError('');
         setTestCases([...testCases, {testCase: newTestCase, testCaseTitle: newTestCaseTitle, createdBy: auth}])
         setTestCaseSuccess('Test Case Added');
         showSuccess('Test Case Added');
       })
       .catch((err) => {
-        setPending(false);
+        setTestCasePending(false);
         setCommentSuccess('');
         const resError = err?.response?.data?.error;
         if (resError) {
@@ -495,6 +497,13 @@ function BugEditor({ auth, showError, showSuccess }) {
               <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
                 Add Test Case
               </button>
+              {testCasePending && (
+                <div className="spinner-border text-light" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              )}
+              {testCaseError && <div className="text-danger">{testCaseError}</div>}
+              {testCaseSuccess && <div className="text-success">{testCaseSuccess}</div>}
             </div>
           
             <div className="TestCaseList">
@@ -511,7 +520,6 @@ function BugEditor({ auth, showError, showSuccess }) {
           </div>
           <div className="BugEditor-CommentList bg-dark bg-gradient rounded mt-3">
             <div className="AddComment p-3">
-              {numComments}
               <div className="d-flex">
                 <img src={avatar} alt="PFP" className="avatar"/>
                 <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>
@@ -520,6 +528,11 @@ function BugEditor({ auth, showError, showSuccess }) {
                 <FaCommentAlt className="me-2" />
                 Post
               </button>
+              {commentPending && (
+                  <div className="spinner-border text-light" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+              )}
               <div>
                 {commentError && <div className="text-danger">{commentError}</div>}
                 {commentSuccess && <div className="text-success">{commentSuccess}</div>}
@@ -528,12 +541,10 @@ function BugEditor({ auth, showError, showSuccess }) {
             <div className="CommentList">
               {!_.isEmpty(comments) ? (_.map(comments, (comment) => (
                 <CommentItem key={comment._id} comment={comment} auth={auth}/>
-              ))) : <div className="text-light text-center fs-4 my-4">Be the First to Post a Comment For {bug?.title}!</div>}
+              ))) : <div className="text-light text-center fs-4 my-4">Be The First To Post A Comment For {bug?.title}!</div>}
             </div>
           </div>
           <div>
-            {testCaseError && <div className="text-danger">{testCaseError}</div>}
-            {testCaseSuccess && <div className="text-success">{testCaseSuccess}</div>}
           </div>
         </div>
       )}

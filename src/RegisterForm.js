@@ -2,11 +2,11 @@ import { useState } from 'react';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import _ from 'lodash';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import InputField from './InputField';
 
 
-function RegisterForm({ showError, showSuccess }) {
+function RegisterForm({ onRegister, onLogin, showError, showSuccess }) {
   const [ email, setEmail ] = useState('');
   const [ confirmEmail, setConfirmEmail ] = useState('');
   const [ password, setPassword ] = useState('');
@@ -17,7 +17,6 @@ function RegisterForm({ showError, showSuccess }) {
   const [ error, setError ] = useState('');
   const [ success, setSuccess ] = useState('');
   const [pending, setPending] = useState(null);
-  const navigate = useNavigate();
 
   const emailError = 
     !email ? 'Email is required' :
@@ -62,13 +61,18 @@ function RegisterForm({ showError, showSuccess }) {
     .then(res => {
       setPending(false);
       setSuccess(res.data.message);
-      // const authPayload = jwt.decode(res.data.token);
-      // const auth = {
-      //   token: res.data.token,
-      //   payload: authPayload
-      // };
-      showSuccess('Account Registered!')
-      navigate('/login');
+      const authPayload = jwt.decode(res.data.token);
+      const auth = {
+        token: res.data.token,
+        payload: authPayload,
+        email,
+        userId: authPayload._id,
+        fullName,
+        role: authPayload.role
+      };
+      setSuccess('Account Registered!');
+      showSuccess('Account Registered!');
+      onRegister(auth);
     })
     .catch(err => {
       setPending(false);
@@ -133,6 +137,7 @@ function RegisterForm({ showError, showSuccess }) {
             value={email}
             onChange={(evt) => onInputChange(evt, setEmail)}
             error={emailError}
+            autoComplete="off"
           />
           <InputField 
             label="Confirm Email"
@@ -151,6 +156,7 @@ function RegisterForm({ showError, showSuccess }) {
             value={password}
             onChange={(evt) => onInputChange(evt, setPassword)}
             error={passwordError}
+            autoComplete="off"
           />
           <InputField 
             label="Confirm Password"

@@ -57,6 +57,14 @@ function App() {
     }
   }
 
+  function onRegister(auth) {
+    setAuth(auth);
+    navigate('/user/me');
+    if (localStorage) {
+      localStorage.setItem('authToken', auth.token);
+    }
+  }
+
   function onLogout() {
     setAuth(null);
     navigate('/login');
@@ -93,7 +101,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginForm onLogin={onLogin} showError={showError} /> } />
-          <Route path="/register" element={<RegisterForm showError={showError} showSuccess={showSuccess}/> } />
+          <Route path="/register" element={<RegisterForm onRegister={onRegister} onLogin={onLogin} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/list" element={<BugList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/:bugId" element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/list" element={<UserList auth={auth} showError={showError} showSuccess={showSuccess}/> } />

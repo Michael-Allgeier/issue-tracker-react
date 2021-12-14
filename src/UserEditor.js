@@ -30,6 +30,8 @@ function UserEditor({ auth, showError, showSuccess }) {
 
   const confirmPasswordError = confirmPassword !== password ? 'Passwords do not match' : '';
 
+  const authRole = auth?.role;
+
   useEffect(() => {
     if (!auth) {
       setError('Must Be Logged In');
@@ -69,6 +71,10 @@ function UserEditor({ auth, showError, showSuccess }) {
       showError('Please fix errors');
       return;
     }
+
+    setPending(true);
+    setError('');
+    setSuccess('');
 
     axios(`${process.env.REACT_APP_API_URL}/api/user/${userId}`, {
       method: 'put',
@@ -184,6 +190,7 @@ function UserEditor({ auth, showError, showSuccess }) {
               value={givenName}
               onChange={(evt) => onInputChange(evt, setGivenName)}
               error={givenNameError}
+              disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Family Name (Last Name)"
@@ -192,6 +199,7 @@ function UserEditor({ auth, showError, showSuccess }) {
               value={familyName}
               onChange={(evt) => onInputChange(evt, setFamilyName)}
               error={familyNameError}
+              disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Full Name"
@@ -200,6 +208,7 @@ function UserEditor({ auth, showError, showSuccess }) {
               value={fullName}
               onChange={(evt) => onInputChange(evt, setFullName)}
               error={fullNameError}
+              disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Email"
@@ -216,6 +225,7 @@ function UserEditor({ auth, showError, showSuccess }) {
               value={password}
               onChange={(evt) => onInputChange(evt, setPassword)}
               error={passwordError}
+              disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Confirm Password"
@@ -224,100 +234,64 @@ function UserEditor({ auth, showError, showSuccess }) {
               value={confirmPassword}
               onChange={(evt) => onInputChange(evt, setConfirmPassword)}
               error={confirmPasswordError}
+              disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <div>
               <div>
                 <div>Roles*</div>
               </div>
               <div className="form-check">
-                {_.includes(role, 'DEV') ? (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="DEV"
-                    id="flexCheckDev"
-                    defaultChecked
-                    onClick={(evt) => onClickCheckbox(evt)}
-                  />
-                ) : (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="DEV"
-                    id="flexCheckDev"
-                    onChange={(evt) => onClickCheckbox(evt)}
-                  />
-                )}
-                {/* <input className="form-check-input" type="checkbox" value="DEV" id="flexCheckDev" defaultChecked onChange={(evt) => onClickCheckbox(evt)}/> */}
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="DEV"
+                  id="flexCheckDev"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                  checked={_.includes(role, 'DEV')}
+                  disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
+                />
                 <label className="form-check-label" htmlFor="flexCheckDev">
                   Developer
                 </label>
               </div>
               <div className="form-check">
-                {_.includes(role, 'QA') ? (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="QA"
-                    id="flexCheckQA"
-                    defaultChecked
-                    onClick={(evt) => onClickCheckbox(evt)}
-                  />
-                ) : (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="QA"
-                    id="flexCheckQA"
-                    onChange={(evt) => onClickCheckbox(evt)}
-                  />
-                )}
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="QA"
+                  id="flexCheckQA"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                  checked={_.includes(role, 'QA')}
+                  disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
+                />
                 <label className="form-check-label" htmlFor="flexCheckQA">
                   Quality Analyst
                 </label>
               </div>
               <div className="form-check">
-                {_.includes(role, 'TM') ? (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="TM"
-                    id="flexCheckTM"
-                    defaultChecked
-                    onClick={(evt) => onClickCheckbox(evt)}
-                  />
-                ) : (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="TM"
-                    id="flexCheckTM"
-                    onChange={(evt) => onClickCheckbox(evt)}
-                  />
-                )}
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="TM"
+                  id="flexCheckTM"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                  checked={_.includes(role, 'TM')}
+                  disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
+                />
                 <label className="form-check-label" htmlFor="flexCheckTM">
                   Technical Manager
                 </label>
               </div>
               <div className="form-check">
-                {_.includes(role, 'BA') ? (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="BA"
-                    id="flexCheckBA"
-                    defaultChecked
-                    onClick={(evt) => onClickCheckbox(evt)}
-                  />
-                ) : (
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    value="BA"
-                    id="flexCheckBA"
-                    onChange={(evt) => onClickCheckbox(evt)}
-                  />
-                )}
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  value="BA"
+                  id="flexCheckBA"
+                  onChange={(evt) => onClickCheckbox(evt)}
+                  checked={_.includes(role, 'BA')}
+                  disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
+                />
                 <label className="form-check-label" htmlFor="flexCheckBA">
                   Business Analyst
                 </label>
@@ -330,18 +304,19 @@ function UserEditor({ auth, showError, showSuccess }) {
                   id="flexCheckPM"
                   checked={_.includes(role, 'PM')}
                   onChange={(evt) => onClickCheckbox(evt)}
+                  disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
                 />
                 <label className="form-check-label" htmlFor="flexCheckPM">
                   Product Manager
                 </label>
               </div>
             </div>
-            <div className="d-flex justify-content-between">
-              <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)}>
+            <div className='d-flex justify-content-between'>
+              <button className="btn btn-primary mt-1" type="submit" onClick={(evt) => onClickSubmitEdit(evt)} disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}>
                 <FaUserEdit className="me-2 mb-1" />
                 Submit Edit
               </button>
-              <button className="btn btn-danger mt-1" type="submit" onClick={(evt) => onClickDeleteUser(evt)}>
+              <button className="btn btn-danger mt-1" type="submit" onClick={(evt) => onClickDeleteUser(evt)} disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}>
                 <FaTrashAlt className="me-2 mb-1" />
                 Delete User
               </button>

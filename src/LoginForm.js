@@ -50,7 +50,9 @@ function LoginForm({ onLogin, showError }) {
         email,
         userId: res.data.userId,
         token: res.data.token,
-        payload: authPayload
+        payload: authPayload,
+        fullName: authPayload.fullName,
+        role: authPayload.role,
       };
       onLogin(auth);
     })
