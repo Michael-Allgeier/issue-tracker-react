@@ -100,12 +100,6 @@ function BugList({ auth, showError, showSuccess }) {
           setError('');
           showError(null);
           showSuccess('Filters Applied!');
-          // const filterBtn = document.getElementById('BugList-ShowFilters');
-          // const filterList = document.getElementById('BugList-Filters');
-
-          // filterBtn.classList.add('d-none');
-          // filterList.classList.remove('d-none');
-          // filterList.classList.add('d-block');
         } else {
           setError('Expected an array');
           showError('Expected an array');
@@ -172,7 +166,7 @@ function BugList({ auth, showError, showSuccess }) {
         </div>
       )}
       <div className="BugList bg-dark rounded">
-        {error && <div className="text-danger text-center fs-4 my-4">{error}</div>}
+        {error && <div className="text-danger text-center fs-1 my-4">{error}</div>}
         {!error && !pending && (
           <div className="p-3 border-bottom border-light">
             <div className="Search input-group mb-3">
@@ -199,9 +193,13 @@ function BugList({ auth, showError, showSuccess }) {
               onClick={(evt) => onClickShowFilters(evt)}
             >
               <FaFilter className="me-2 mb-1" />
-              Filter List
+              Show Filters
             </button>
-            <div className={areFiltersVisible ? "Filters mt-5" : 'd-none'} id="BugList-Filters">
+            <button type="submit" className={areFiltersVisible ? 'btn btn-danger' : 'd-none'} onClick={(evt) => onClickCloseFilters(evt)}>
+              <FaWindowClose className='me-2 mb-1' />
+              Close Filters
+            </button>
+            <div className={areFiltersVisible ? "Filters mt-3" : 'd-none'} id="BugList-Filters">
               <div className="mb-3">
                 <label htmlFor="Filters-Classification" className="form-label visually-hidden">
                   Classification
@@ -268,63 +266,37 @@ function BugList({ auth, showError, showSuccess }) {
               </div>
               <div>
                 <span className="fs-5">
-                  {openFilter === true ? (
                     <input
                       type="checkbox"
                       className="form-check-input"
                       value="open"
                       id="Filters-Open"
                       onChange={(evt) => onClickCheckbox(evt)}
-                      defaultChecked
+                      checked={openFilter}
                     />
-                  ) : (
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      value="open"
-                      id="Filters-Open"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
                   <label htmlFor="Filters-Open" className="form-label ms-1">
                     Open
                   </label>
                 </span>
                 <span className="ms-3 fs-5">
-                  {closedFilter === true ? (
                     <input
                       type="checkbox"
                       className="form-check-input"
                       value="closed"
                       id="Filters-Close"
                       onChange={(evt) => onClickCheckbox(evt)}
-                      defaultChecked
+                      checked={closedFilter}
                     />
-                  ) : (
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      value="closed"
-                      id="Filters-Close"
-                      onChange={(evt) => onClickCheckbox(evt)}
-                    />
-                  )}
                   <label htmlFor="Filters-Close" className="form-label ms-1">
                     Closed
                   </label>
                 </span>
               </div>
-              <span>
-                <button type="submit" className='btn btn-danger' onClick={(evt) => onClickCloseFilters(evt)}>
-                  <FaWindowClose className='me-2 mb-1' />
-                  Close Filters
-                </button>
-              </span>
             </div>
           </div>
         )}
         {!pending && !error && _.isEmpty(items) && (
-          <div className="text-danger text-center fs-4 my-4">No Bugs Found</div>
+          <div className="text-danger text-center fs-1 my-4">No Bugs Found</div>
         )}
         {_.map(items, (item) => (
           <BugListItem key={item._id} item={item} />

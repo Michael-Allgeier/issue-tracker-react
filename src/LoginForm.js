@@ -88,19 +88,23 @@ function LoginForm({ onLogin, showError }) {
           label="Email"
           id="LoginForm-Email"
           type="email"
+          name="email"
           placeholder="johndoe@example.com"
           value={email}
           onChange={(evt) => onInputChange(evt, setEmail)}
           error={emailError}
+          autoComplete="email"
         />
         <InputField 
           label="Password"
           id="LoginForm-Password"
           type="password"
+          name="password"
           placeholder=""
           value={password}
           onChange={(evt) => onInputChange(evt, setPassword)}
           error={passwordError}
+          autoComplete="current-password"
         />
         <div className="d-flex justify-content-between mt-3">
           <button type="submit" className="LoginForm-Submit btn btn-primary btn-lg" onClick={(evt) => onClickLogin(evt)}>

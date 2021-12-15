@@ -55,7 +55,7 @@ body {
   width: 100;
 }
 
-.BugList {
+.BugList, .NotFound {
   width: 100;
   border: 2px solid white;
   box-shadow: 1px 1px 10px white;
@@ -87,8 +87,3 @@ body {
   border-radius: 50%;
   border: 1px solid gray;
 }
-
-/*
-.comment-text {
-  overflow-wrap: break-word;
-} */

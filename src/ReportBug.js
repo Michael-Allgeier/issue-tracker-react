@@ -36,10 +36,11 @@ function ReportBug({auth, showError, showSuccess}) {
     setAddBugSuccess('');
     setPending(true);
 
-    if (!bugTitle || !bugDescription || !bugStepsToReproduce) {
-      setAddBugError('Inputs can not be empty!');
-      showError('Fix errors');
+    if (bugTitleError || bugDescriptionError || bugStepsToReproduceError) {
+      setAddBugError('Please Fix Errors');
+      showError('Please Fix Errors');
       setPending(false);
+      return;
     }
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/new`, {

@@ -34,11 +34,11 @@ function BugEditor({ auth, showError, showSuccess }) {
   const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
   const [testCaseError, setTestCaseError] = useState('');
   const [testCaseSuccess, setTestCaseSuccess] = useState('');
-
-  // const [newCommentText, setNewCommentText] = useState('');
-
-  // const [newTestCaseTitle, setNewTestCaseTitle] = useState('');
-  // const [newTestCaseBody, setNewTestCaseBody] = useState('');
+  const [numComments, setNumComments] = useState('');
+  const [numTestCases, setNumTestCases] = useState('');
+  const [numPassedTestCases, setNumPassedTestCases] = useState('');
+  const [numFailedTestCases, setNumFailedTestCases] = useState('');
+  const [numUnexecutedTestCases, setNumUnexecutedTestCases] = useState('');
 
   const titleError = !title ? 'Title is required' : '';
 
@@ -56,6 +56,10 @@ function BugEditor({ auth, showError, showSuccess }) {
     setPending(true);
     setError('');
     setSuccess('');
+    setTestCaseError('');
+    setTestCaseSuccess('');
+    setCommentError('');
+    setCommentSuccess('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}`, {
       method: 'get',
       headers: {
@@ -89,6 +93,10 @@ function BugEditor({ auth, showError, showSuccess }) {
 
     setError('');
     setSuccess('');
+    setTestCaseError('');
+    setTestCaseSuccess('');
+    setCommentError('');
+    setCommentSuccess('');
     axios(`${process.env.REACT_APP_API_URL}/api/user/list`, {
       method: 'get',
       params: { pageSize: 1000, sortBy: 'givenName' },
@@ -114,6 +122,10 @@ function BugEditor({ auth, showError, showSuccess }) {
 
     setError('');
     setSuccess('');
+    setTestCaseError('');
+    setTestCaseSuccess('');
+    setCommentError('');
+    setCommentSuccess('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/comment/list`, {
       method: 'get',
       headers: {
@@ -122,6 +134,7 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
       .then((res) => {
         setComments(res.data);
+        setNumComments(res.data.length);
       })
       .catch((err) => {
         setError(err.message);
@@ -138,6 +151,10 @@ function BugEditor({ auth, showError, showSuccess }) {
 
     setError('');
     setSuccess('');
+    setTestCaseError('');
+    setTestCaseSuccess('');
+    setCommentError('');
+    setCommentSuccess('');
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/list`, {
       method: 'get',
       headers: {
@@ -146,12 +163,30 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
       .then((res) => {
         setTestCases(res.data);
+        setNumTestCases(res.data.length);
+
+        let numPassed = 0;
+        let numFailed = 0;
+        let numUnexecuted = 0;
+
+        for (let i = 0; i < res.data.length; i++) {
+          if (!res.data[i].execution) {
+            numUnexecuted += 1;
+          } else if (res.data[i].execution === 'Passed') {
+            numPassed += 1;
+          } else if (res.data[i].execution === 'Failed') {
+            numFailed += 1;
+          }
+        }
+        setNumPassedTestCases(numPassed);
+        setNumFailedTestCases(numFailed);
+        setNumUnexecutedTestCases(numUnexecuted);
       })
       .catch((err) => {
         setError(err.message);
         showError(err.message);
       });
-  }, [bugId, auth, showError]);
+  }, [bugId, auth, showError, numTestCases]);
 
   function onClickSubmitEdit(evt) {
     evt.preventDefault();
@@ -170,9 +205,6 @@ function BugEditor({ auth, showError, showSuccess }) {
     })
       .then((res) => {
         setPending(false);
-        // res.data.title = title;
-        // res.data.description = description;
-        // res.data.stepsToReproduce = stepsToReproduce;
         showSuccess('Bug Updated!');
         setEditSuccess('Bug Updated!');
       })
@@ -321,7 +353,9 @@ function BugEditor({ auth, showError, showSuccess }) {
           setCommentError('');
           setCommentSuccess('Comment Posted');
           showSuccess('Comment Posted');
-          setComments([...comments, {comment: newComment, author: auth}]);
+          setComments([...comments, {_id: res.data.commentId, comment: newComment, author: auth}]);
+          setNumComments(numComments + 1);
+          setNewComment('');
         })
         .catch((err) => {
           setCommentPending(false);
@@ -350,9 +384,18 @@ function BugEditor({ auth, showError, showSuccess }) {
     setCommentSuccess('');
     setTestCasePending(true);
 
-    if (!newTestCase || !newTestCaseTitle) {
-      setTestCaseError('Inputs can not be empty!');
+    if (!newTestCase && !newTestCaseTitle) {
+      setTestCaseError('Test Case and Test Case Title can not be empty!');
       setTestCasePending(false);
+      return;
+    } else if (!newTestCase) {
+      setTestCaseError('Test Case can not be empty!');
+      setTestCasePending(false);
+      return;
+    } else if (!newTestCaseTitle) {
+      setTestCaseError('Test Case Title can not be empty!');
+      setTestCasePending(false);
+      return;
     }
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/new`, {
@@ -365,9 +408,13 @@ function BugEditor({ auth, showError, showSuccess }) {
       .then((res) => {
         setTestCasePending(false);
         setTestCaseError('');
-        setTestCases([...testCases, {testCase: newTestCase, testCaseTitle: newTestCaseTitle, createdBy: auth}])
+        setTestCases([...testCases, {_id: res.data.testId, testCase: newTestCase, testCaseTitle: newTestCaseTitle, createdBy: auth}])
         setTestCaseSuccess('Test Case Added');
         showSuccess('Test Case Added');
+        setNewTestCase('');
+        setNewTestCaseTitle('');
+        setNumTestCases(numTestCases + 1);
+        setNumUnexecutedTestCases(numUnexecutedTestCases + 1);
       })
       .catch((err) => {
         setTestCasePending(false);
@@ -490,6 +537,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           {success && <div className="mt-1 text-success">{success}</div>}
           <div className="BugEditor-TestCaseList bg-dark bg-gradient rounded mt-3">
             <div className="AddTestCase p-3">
+              {numTestCases === 1 ? <div className='fs-4 mb-2'>{numTestCases} Test Case</div> : <div className='fs-4 mb-2'>{numTestCases} Test Cases</div>}
               <label htmlFor="AddTestCaseTitle" className="form-label visually-hidden"></label>
               <input type="text" className="form-control" id="AddTestCaseTitle" value={newTestCaseTitle} placeholder="Test Case Title..." onChange={(evt) => onInputChange(evt, setNewTestCaseTitle)}/>
               <label htmlFor="AddTestCase" classification="form-label visually-hidden"></label>
@@ -497,6 +545,11 @@ function BugEditor({ auth, showError, showSuccess }) {
               <button className="btn btn-primary my-3" type="submit" onClick={(evt) => onClickAddTestCase(evt)}>
                 Add Test Case
               </button>
+              <div>
+                <span className={numPassedTestCases > 0 ? 'btn btn-success me-2 text-dark border border-light' : 'd-none'}>{numPassedTestCases} Passed</span>
+                <span className={numFailedTestCases > 0 ? 'btn btn-danger me-2 text-dark border border-light' : 'd-none'}>{numFailedTestCases} Failed</span>
+                <span className={numUnexecutedTestCases > 0 ? 'btn btn-warning me-2 text-dark border border-light' : 'd-none'}>{numUnexecutedTestCases} Unexecuted</span>
+              </div>
               {testCasePending && (
                 <div className="spinner-border text-light" role="status">
                   <span className="visually-hidden">Loading...</span>
@@ -520,6 +573,7 @@ function BugEditor({ auth, showError, showSuccess }) {
           </div>
           <div className="BugEditor-CommentList bg-dark bg-gradient rounded mt-3">
             <div className="AddComment p-3">
+              {numComments === 1 ? <div className="fs-4 mb-2">{numComments} Comment</div> : <div className="fs-4 mb-2">{numComments} Comments</div>}
               <div className="d-flex">
                 <img src={avatar} alt="PFP" className="avatar"/>
                 <textarea className="form-control ms-3" id="AddComment" type="text" value={newComment} onChange={(evt) => onInputChange(evt, setNewComment)} placeholder="Add Comment..."/>

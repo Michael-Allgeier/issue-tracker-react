@@ -117,7 +117,7 @@ function UserList({ auth, showError, showSuccess }) {
         </div>
       )}
       <div className="UserList bg-dark rounded">
-        {error && <div className="text-danger text-center fs-4 my-4">{error}</div>}
+        {error && <div className="text-danger text-center fs-1 my-4">{error}</div>}
         {!error && !pending && (
           <div className="p-3 border-bottom border-light">
             <div className="Search input-group mb-3">
@@ -137,9 +137,13 @@ function UserList({ auth, showError, showSuccess }) {
               onClick={(evt) => onClickShowFilters(evt)}
             >
               <FaFilter className="me-2 mb-1" />
-              Filter List
+              Show Filters
             </button>
-            <div className={areFiltersVisible ? "Filters mt-5" : 'd-none'} id="UserList-Filters">
+            <button type="submit" className={areFiltersVisible ? 'btn btn-danger' : 'd-none'} onClick={(evt) => onClickCloseFilters(evt)}>
+              <FaWindowClose className='me-2 mb-1'/>
+              Close Filters
+            </button>
+            <div className={areFiltersVisible ? "Filters mt-3" : 'd-none'} id="UserList-Filters">
               <div className="mb-3">
                 <label htmlFor="UserList-Filters-Role" className="form-label visually-hidden">
                   Role
@@ -204,17 +208,11 @@ function UserList({ auth, showError, showSuccess }) {
                   />
                 </div>
               </div>
-              <div>
-                <button type="submit" className='btn btn-danger' onClick={(evt) => onClickCloseFilters(evt)}>
-                  <FaWindowClose className='me-2 mb-1'/>
-                  Close Filters
-                </button>
-              </div>
             </div>
           </div>
         )}
         {!pending && !error && _.isEmpty(items) && (
-          <div className="text-danger text-center fs-4 my-4">No Users Found</div>
+          <div className="text-danger text-center fs-1 my-4">No Users Found</div>
         )}
         {_.map(items, (item) => (
           <UserListItem key={item._id} item={item} />

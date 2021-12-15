@@ -6,7 +6,7 @@ import { Link} from 'react-router-dom';
 import InputField from './InputField';
 
 
-function RegisterForm({ onRegister, onLogin, showError, showSuccess }) {
+function RegisterForm({ onRegister, showError, showSuccess }) {
   const [ email, setEmail ] = useState('');
   const [ confirmEmail, setConfirmEmail ] = useState('');
   const [ password, setPassword ] = useState('');
@@ -51,6 +51,7 @@ function RegisterForm({ onRegister, onLogin, showError, showSuccess }) {
     if (emailError || passwordError || confirmEmailError || confirmPasswordError || givenNameError || familyNameError || fullNameError) {
       setError('Please fix errors');
       showError('Please fix errors');
+      setPending(false);
       return;
     }
 
@@ -106,66 +107,78 @@ function RegisterForm({ onRegister, onLogin, showError, showSuccess }) {
             label="Given Name (First Name)"
             id="RegisterForm-GivenName"
             type="text"
+            name="givenName"
             placeholder=""
             value={givenName}
             onChange={(evt) => onInputChange(evt, setGivenName)}
             error={givenNameError}
+            autoComplete="given-name"
           />
           <InputField 
             label="Family Name (Last Name)"
             id="RegisterForm-FamilyName"
             type="text"
+            name="familyName"
             placeholder=""
             value={familyName}
             onChange={(evt) => onInputChange(evt, setFamilyName)}
             error={familyNameError}
+            autoComplete="family-name"
           />
           <InputField 
             label="Full Name"
             id="RegisterForm-FullName"
             type="text"
+            name="fullName"
             placeholder=""
             value={fullName}
             onChange={(evt) => onInputChange(evt, setFullName)}
             error={fullNameError}
+            autoComplete="name"
           />
           <InputField 
             label="Email"
             id="RegisterForm-Email"
             type="email"
+            name="email"
             placeholder="johndoe@example.com"
             value={email}
             onChange={(evt) => onInputChange(evt, setEmail)}
             error={emailError}
-            autoComplete="off"
+            autoComplete="email"
           />
           <InputField 
             label="Confirm Email"
             id="RegisterForm-EmailConfirm"
             type="email"
+            name="confirmEmail"
             placeholder="johndoe@example.com"
             value={confirmEmail}
             onChange={(evt) => onInputChange(evt, setConfirmEmail)}
             error={confirmEmailError}
+            autoComplete="email"
           />
           <InputField 
             label="Password"
             id="RegisterForm-Password"
             type="password"
+            name="newPassword"
             placeholder=""
             value={password}
             onChange={(evt) => onInputChange(evt, setPassword)}
             error={passwordError}
-            autoComplete="off"
+            autoComplete="new-password"
           />
           <InputField 
             label="Confirm Password"
             id="RegisterForm-PasswordConfirm"
             type="password"
+            name="confirmPassword"
             placeholder=""
             value={confirmPassword}
             onChange={(evt) => onInputChange(evt, setConfirmPassword)}
             error={confirmPasswordError}
+            autoComplete="new-password"
           />
           <div className="d-flex justify-content-between mt-3">
             <button type="submit" className="RegisterForm-Submit btn btn-success" onClick={(evt) => onClickRegister(evt)}>Register</button>

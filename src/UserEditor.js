@@ -187,53 +187,65 @@ function UserEditor({ auth, showError, showSuccess }) {
               label="Given Name (First Name)"
               id="UserEditor-GivenName"
               type="text"
+              name="givenName"
               value={givenName}
               onChange={(evt) => onInputChange(evt, setGivenName)}
               error={givenNameError}
+              autoComplete="given-name"
               disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Family Name (Last Name)"
               id="UserEditor-FamilyName"
               type="text"
+              name="familyName"
               value={familyName}
               onChange={(evt) => onInputChange(evt, setFamilyName)}
               error={familyNameError}
+              autoComplete="family-name"
               disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Full Name"
               id="UserEditor-FullName"
               type="text"
+              name="fullName"
               value={fullName}
               onChange={(evt) => onInputChange(evt, setFullName)}
               error={fullNameError}
+              autoComplete="name"
               disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Email"
               id="UserEditor-Email"
               type="email"
+              name="email"
               value={email}
               onChange={(evt) => onInputChange(evt, setEmail)}
+              autoComplete="email"
               disabled
             />
             <InputField
               label="Password"
               id="UserEditor-Password"
               type="password"
+              name="newPassword"
               value={password}
               onChange={(evt) => onInputChange(evt, setPassword)}
               error={passwordError}
+              autoComplete="new-password"
               disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <InputField
               label="Confirm Password"
               id="UserEditor-ConfirmPassword"
               type="password"
+              name="confirmPassword"
               value={confirmPassword}
               onChange={(evt) => onInputChange(evt, setConfirmPassword)}
               error={confirmPasswordError}
+              autoComplete="new-password"
               disabled={_.includes(authRole, 'TM') || _.includes(authRole, 'Admin') ? false : true}
             />
             <div>

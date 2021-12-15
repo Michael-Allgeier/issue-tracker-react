@@ -1,11 +1,9 @@
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 import BugList from './BugList';
-//import BugListItem from './BugListItem';
 import BugEditor from './BugEditor';
 import ReportBug from './ReportBug';
 import UserList from './UserList';
-//import UserListItem from './UserListItem';
 import UserEditor from './UserEditor';
 import SelfEditor from './SelfEditor';
 import TestCaseEditor from './TestCaseEditor';
@@ -22,11 +20,6 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const [auth, setAuth] = useState(null);
   const navigate = useNavigate();
-
-  // function onClickRegister(evt) {
-  //   evt.preventDefault();
-  //   setScreen("Register");
-  // }
 
   useEffect(() => {
     if (localStorage) {
@@ -82,16 +75,6 @@ function App() {
     toast(message, {type: 'success', position: 'bottom-right'});
   }
 
-  // function onClickBugList(evt) {
-  //   evt.preventDefault();
-  //   setScreen("BugList");
-  // }
-
-  // function onClickUserList(evt) {
-  //   evt.preventDefault();
-  //   setScreen("UserList");
-  // }
-
   return (
   <div className="App min-vh-100 d-flex flex-column">
     <Navbar auth={auth} onLogout={onLogout}/>
@@ -101,7 +84,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginForm onLogin={onLogin} showError={showError} /> } />
-          <Route path="/register" element={<RegisterForm onRegister={onRegister} onLogin={onLogin} showError={showError} showSuccess={showSuccess}/> } />
+          <Route path="/register" element={<RegisterForm onRegister={onRegister} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/list" element={<BugList auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/bug/:bugId" element={<BugEditor auth={auth} showError={showError} showSuccess={showSuccess}/> } />
           <Route path="/user/list" element={<UserList auth={auth} showError={showError} showSuccess={showSuccess}/> } />

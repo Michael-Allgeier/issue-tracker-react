@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import _ from 'lodash';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import InputField from './InputField';
 import axios from 'axios';
@@ -15,6 +15,7 @@ function TestCaseEditor({auth, showError, showSuccess}) {
   const [pending, setPending] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const testCaseTitleError = !testCaseTitle ? 'Test Case Title is required' : '';
   const testCaseTextError = !testCaseText ? 'Test Case is required' : '';
@@ -100,7 +101,6 @@ function TestCaseEditor({auth, showError, showSuccess}) {
     setPending(true);
     setError('');
     setSuccess('');
-    console.log(execution);
 
     axios(`${process.env.REACT_APP_API_URL}/api/bug/${bugId}/test/${testId}/execute`, {
       method: 'put',
@@ -147,6 +147,7 @@ function TestCaseEditor({auth, showError, showSuccess}) {
           setPending(false);
           setError('');
           showSuccess(`${testCase?.testCaseTitle} Deleted!`);
+          navigate(`/bug/${bugId}`);
         })
         .catch((err) => {
           setPending(false);
