@@ -197,7 +197,7 @@ function SelfEditor({ auth, showError, showSuccess }) {
               id="UserEditor-Roles"
               type="text"
               name="role"
-              value={role}
+              value={_.isEmpty(role) ? "No Role" : role}
               disabled
             />
             <div className="d-flex justify-content-between">
