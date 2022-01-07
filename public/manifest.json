@@ -1,7 +1,8 @@
 {
-  "id": "m5u5==fg$_tPchPx",
+  "id": "mallgeier/issue-tracker",
   "short_name": "Issue Tracker",
   "name": "Issue Tracker | Michael Allgeier",
+  "description": "Issue Tracker Built with MongoDB, Express, React, and Node",
   "icons": [
     {
       "src": "favicon.ico",
